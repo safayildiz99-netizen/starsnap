@@ -135,7 +135,7 @@
       <div class="story-card"><img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=700&q=80"><div class="story-info"><strong>Kerem ⚽</strong><small>vor 21 Min.</small></div></div>
       <div class="story-card"><img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=700&q=80"><div class="story-info"><strong>Noah 🎮</strong><small>vor 1 Std.</small></div></div>
       <div class="story-card"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=80"><div class="story-info"><strong>Freunde ⭐</strong><small>vor 2 Std.</small></div></div>
-    </div><div class="ai-feed-banner" id="aiFeedBanner"><div><strong>StarSnap KI Auto-Status</strong><small>Luna AI und Leo AI posten automatisch alle 5 Minuten fünf neue Status-Posts.</small></div><span class="ai-burst">+5 / 5 Min</span></div><h2 class="section-title">KI Status-Feed</h2><div class="sub">Automatisch generierte Status von einem Mädchen und einem Jungen.</div><div class="story-grid" id="aiStatusGrid"></div></div></section>
+    </div><div class="ai-feed-banner" id="aiFeedBanner"><div><strong>StarSnap KI Auto-Status</strong><small>Nele, Sofia, Lisa, Mert, Paul und Tim posten automatisch jede Minute jeweils fünf neue Stories.</small></div><span class="ai-burst">30 / Min</span></div><h2 class="section-title">KI Story-Feed</h2><div class="sub">Sechs erwachsene KI-Creator (18+): drei Frauen und drei Männer.</div><div class="story-grid" id="aiStatusGrid"></div></div></section>
     <section class="page" id="chatsPage"><div class="pad"><h1 class="title">Chats</h1><div class="sub">Nur bestätigte Freunde können dir schreiben.</div><input class="search" placeholder="Freunde suchen …"><div class="chat-list">
       <div class="chat"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"><div><strong>Emir</strong><p>Neuer Snap · gerade eben</p></div><span class="badge">1</span></div>
       <div class="chat"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"><div><strong>Lina</strong><p>Haha 😂 · 4 Min.</p></div><span>›</span></div>
@@ -289,29 +289,64 @@ qs('#createAiFilter').onclick=async()=>{const prompt=aiPrompt.value.trim();if(!p
 
 /* KI Auto-Status · Mädchen + Junge */
 const aiProfiles=[
-  {name:'Luna AI', avatar:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80', accent:'✨', posts:[
-    {img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80', text:'Mirror Glow ✨'},
-    {img:'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80', text:'Outfit check 💫'},
-    {img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80', text:'Coffee & good vibes ☕'},
-    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80', text:'Ready for the day 🌸'},
-    {img:'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80', text:'Soft glam moment 💄'}
+  {name:'Nele', gender:'Frau', age:'21+', avatar:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=220&q=86', accent:'✨', posts:[
+    {img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=86',text:'Golden hour ✨'},
+    {img:'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=86',text:'Outfit of the day 🖤'},
+    {img:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1000&q=86',text:'City mood 🌆'},
+    {img:'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=86',text:'Weekend look ✨'},
+    {img:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1000&q=86',text:'Soft glam 💫'},
+    {img:'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=1000&q=86',text:'Just good vibes 🤍'}
   ]},
-  {name:'Leo AI', avatar:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80', accent:'⚡', posts:[
-    {img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80', text:'Gym energy ⚡'},
-    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80', text:'Street style today 😎'},
-    {img:'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80', text:'Sunset snap 🌇'},
-    {img:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=900&q=80', text:'Travel mode on ✈️'},
-    {img:'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=80', text:'Fresh look today 🔥'}
+  {name:'Sofia', gender:'Frau', age:'22+', avatar:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=220&q=86', accent:'💫', posts:[
+    {img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1000&q=86',text:'Coffee first ☕'},
+    {img:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=86',text:'Fresh look today ✨'},
+    {img:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1000&q=86',text:'Street style 🖤'},
+    {img:'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1000&q=86',text:'Sunshine mood ☀️'},
+    {img:'https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=1000&q=86',text:'Tonight ✨'},
+    {img:'https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1000&q=86',text:'Glow mode 💫'}
+  ]},
+  {name:'Lisa', gender:'Frau', age:'23+', avatar:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=220&q=86', accent:'🌸', posts:[
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=86',text:'Good morning 🌸'},
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=86',text:'Ready to go ✨'},
+    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Clean look 🤍'},
+    {img:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=1000&q=86',text:'Weekend energy 💫'},
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=86',text:'Late night snap 🌙'},
+    {img:'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?auto=format&fit=crop&w=1000&q=86',text:'Studio vibes ✨'}
+  ]},
+  {name:'Mert', gender:'Mann', age:'22+', avatar:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=220&q=86', accent:'⚡', posts:[
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=86',text:'Fresh cut ⚡'},
+    {img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1000&q=86',text:'City mode 😎'},
+    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Sharp today 🖤'},
+    {img:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=1000&q=86',text:'On the move ✈️'},
+    {img:'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=1000&q=86',text:'Weekend fit 🔥'},
+    {img:'https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=1000&q=86',text:'Night vibes 🌃'}
+  ]},
+  {name:'Paul', gender:'Mann', age:'24+', avatar:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=220&q=86', accent:'🔥', posts:[
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=86',text:'No filter needed 🔥'},
+    {img:'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1000&q=86',text:'Street mood ⚡'},
+    {img:'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=1000&q=86',text:'Today’s look 😎'},
+    {img:'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=1000&q=86',text:'Golden hour 🌇'},
+    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Classic 🖤'},
+    {img:'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=1000&q=86',text:'Weekend plans ✨'}
+  ]},
+  {name:'Tim', gender:'Mann', age:'23+', avatar:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=220&q=86', accent:'⭐', posts:[
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=86',text:'Ready ⭐'},
+    {img:'https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=1000&q=86',text:'Casual today 😎'},
+    {img:'https://images.unsplash.com/photo-1530268729831-4b0b9e170218?auto=format&fit=crop&w=1000&q=86',text:'Good day ✨'},
+    {img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=86',text:'Simple fit 🖤'},
+    {img:'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=1000&q=86',text:'Out & about ⚡'},
+    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Late one 🌙'}
   ]}
 ];
+const AI_STATUS_VERSION='six-adult-creators-v1';
 function loadAiStatuses(){return JSON.parse(localStorage.getItem('starsnapAiStatuses')||'[]')}
 function saveAiStatuses(v){localStorage.setItem('starsnapAiStatuses',JSON.stringify(v))}
 function timeAgo(ts){const s=Math.max(1,Math.floor((Date.now()-ts)/1000));if(s<60)return 'gerade eben';const m=Math.floor(s/60);if(m<60)return `vor ${m} Min.`;const h=Math.floor(m/60);if(h<24)return `vor ${h} Std.`;const d=Math.floor(h/24);return `vor ${d} Tag${d>1?'en':''}`;}
 function timeShort(ts){return new Date(ts).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}
-function makeAiBatch(count=5){const feed=loadAiStatuses();const now=Date.now();for(let i=0;i<count;i++){const profile=aiProfiles[(feed.length+i)%aiProfiles.length],pick=profile.posts[Math.floor(Math.random()*profile.posts.length)];feed.unshift({id:'ai-'+now+'-'+i,author:profile.name,avatar:profile.avatar,accent:profile.accent,img:pick.img,text:pick.text,ts:now-i*12000})}saveAiStatuses(feed.slice(0,40));localStorage.setItem('starsnapAiLastBatch',String(now));renderAiStatusFeed();renderAiStoryBubbles();showToast('StarSnap KI hat 5 neue Status gepostet')}
-function renderAiStoryBubbles(){const row=qs('.stories-row');if(!row)return;qsa('.story.ai-gen').forEach(el=>el.remove());aiProfiles.forEach(profile=>{const latest=loadAiStatuses().find(x=>x.author===profile.name);const story=document.createElement('div');story.className='story ai-gen';story.innerHTML=`<div class="avatar"><img src="${latest?.avatar||profile.avatar}" alt="${profile.name}"></div>${profile.name}`;story.onclick=()=>{openPage('storiesPage');const grid=qs('#aiStatusGrid');if(grid){grid.scrollIntoView({behavior:'smooth',block:'start'})}};row.appendChild(story)})}
-function renderAiStatusFeed(){const grid=qs('#aiStatusGrid');if(!grid)return;const items=loadAiStatuses();grid.innerHTML=items.slice(0,12).map(item=>`<div class="story-card ai-post"><img src="${item.img}" alt="${item.author}"><div class="story-info"><strong><span class="ai-dot"></span>${item.author} ${item.accent}</strong><small>${item.text} · ${timeAgo(item.ts)}</small></div></div>`).join('');const banner=qs('#aiFeedBanner');const last=+(localStorage.getItem('starsnapAiLastBatch')||0);if(banner)banner.querySelector('small').textContent=`Luna AI und Leo AI posten automatisch alle 5 Minuten fünf neue Status-Posts. Letztes Update: ${last?timeShort(last):'jetzt'}.`; }
-function initAiStatusSystem(){if(loadAiStatuses().length<5)makeAiBatch(5);else{renderAiStatusFeed();renderAiStoryBubbles()}const check=()=>{const last=+(localStorage.getItem('starsnapAiLastBatch')||0);if(Date.now()-last>=300000)makeAiBatch(5);else{renderAiStatusFeed();renderAiStoryBubbles()}};check();setInterval(check,30000);window.addEventListener('storage',e=>{if(['starsnapAiStatuses','starsnapAiLastBatch'].includes(e.key)) {renderAiStatusFeed();renderAiStoryBubbles()}})}
+function makeAiBatch(){const feed=loadAiStatuses();const now=Date.now();let offset=0;for(const profile of aiProfiles){for(let i=0;i<5;i++){const pick=profile.posts[Math.floor(Math.random()*profile.posts.length)];feed.unshift({id:'ai-'+now+'-'+profile.name+'-'+i,author:profile.name,age:profile.age,avatar:profile.avatar,accent:profile.accent,img:pick.img,text:pick.text,ts:now-offset*1200});offset++;}}saveAiStatuses(feed.slice(0,180));localStorage.setItem('starsnapAiLastBatch',String(now));renderAiStatusFeed();renderAiStoryBubbles();showToast('30 neue KI-Stories veröffentlicht')}
+function renderAiStoryBubbles(){const row=qs('.stories-row');if(!row)return;qsa('.story.ai-gen').forEach(el=>el.remove());aiProfiles.forEach(profile=>{const latest=loadAiStatuses().find(x=>x.author===profile.name);const story=document.createElement('div');story.className='story ai-gen';story.innerHTML=`<div class="avatar"><img src="${latest?.avatar||profile.avatar}" alt="${profile.name}"></div>${profile.name}`;story.title=`${profile.name} · KI-Creator · ${profile.age}`;story.onclick=()=>{openPage('storiesPage');const grid=qs('#aiStatusGrid');if(grid){grid.scrollIntoView({behavior:'smooth',block:'start'})}};row.appendChild(story)})}
+function renderAiStatusFeed(){const grid=qs('#aiStatusGrid');if(!grid)return;const items=loadAiStatuses();grid.innerHTML=items.slice(0,60).map(item=>`<div class="story-card ai-post"><img src="${item.img}" alt="${item.author}"><div class="story-info"><strong><span class="ai-dot"></span>${item.author} ${item.accent}</strong><small>KI · ${item.age||'18+'} · ${item.text} · ${timeAgo(item.ts)}</small></div></div>`).join('');const banner=qs('#aiFeedBanner');const last=+(localStorage.getItem('starsnapAiLastBatch')||0);if(banner)banner.querySelector('small').textContent=`Nele, Sofia, Lisa, Mert, Paul und Tim posten jede Minute jeweils 5 Stories (30 pro Minute). Letztes Update: ${last?timeShort(last):'jetzt'}.`;}
+function initAiStatusSystem(){if(localStorage.getItem('starsnapAiStatusVersion')!==AI_STATUS_VERSION){localStorage.setItem('starsnapAiStatusVersion',AI_STATUS_VERSION);localStorage.removeItem('starsnapAiStatuses');localStorage.removeItem('starsnapAiLastBatch')}if(loadAiStatuses().length<30)makeAiBatch();else{renderAiStatusFeed();renderAiStoryBubbles()}const check=()=>{const last=+(localStorage.getItem('starsnapAiLastBatch')||0);if(Date.now()-last>=60000)makeAiBatch();else{renderAiStatusFeed();renderAiStoryBubbles()}};check();setInterval(check,5000);window.addEventListener('storage',e=>{if(['starsnapAiStatuses','starsnapAiLastBatch'].includes(e.key)){renderAiStatusFeed();renderAiStoryBubbles()}})}
 restoreCustomFilters();fitCanvas();
 initAiStatusSystem();
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
