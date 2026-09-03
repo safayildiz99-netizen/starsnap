@@ -135,7 +135,7 @@
       <div class="story-card"><img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=700&q=80"><div class="story-info"><strong>Kerem ⚽</strong><small>vor 21 Min.</small></div></div>
       <div class="story-card"><img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=700&q=80"><div class="story-info"><strong>Noah 🎮</strong><small>vor 1 Std.</small></div></div>
       <div class="story-card"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=700&q=80"><div class="story-info"><strong>Freunde ⭐</strong><small>vor 2 Std.</small></div></div>
-    </div><div class="ai-feed-banner" id="aiFeedBanner"><div><strong>StarSnap KI Auto-Status</strong><small>Insgesamt 5 neue Stories pro Minute – abwechselnd von Nele, Sofia, Lisa, Mert, Paul und Tim.</small></div><span class="ai-burst">5 / Min</span></div><h2 class="section-title">KI Story-Feed</h2><div class="sub">Sechs erwachsene KI-Creator (18+): drei Frauen und drei Männer.</div><div class="story-grid" id="aiStatusGrid"></div></div></section>
+    </div><div class="ai-feed-banner" id="aiFeedBanner"><div><strong>StarSnap KI Auto-Status</strong><small>Insgesamt 5 neue Stories pro Minute – abwechselnd von Nele, Sofia, Lisa, Mert, Paul und Tim.</small></div><span class="ai-burst">5 / Min</span></div><h2 class="section-title">KI Story-Feed</h2><div class="sub">Sechs erwachsene KI-Creator (18+): jede Person hat eine feste Identität und bleibt in jeder Story dieselbe Person.</div><div class="story-grid" id="aiStatusGrid"></div></div></section>
     <section class="page" id="chatsPage"><div class="pad"><h1 class="title">Chats</h1><div class="sub">Nur bestätigte Freunde können dir schreiben.</div><input class="search" placeholder="Freunde suchen …"><div class="chat-list">
       <div class="chat"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"><div><strong>Emir</strong><p>Neuer Snap · gerade eben</p></div><span class="badge">1</span></div>
       <div class="chat"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80"><div><strong>Lina</strong><p>Haha 😂 · 4 Min.</p></div><span>›</span></div>
@@ -290,55 +290,55 @@ qs('#createAiFilter').onclick=async()=>{const prompt=aiPrompt.value.trim();if(!p
 /* KI Auto-Status · Mädchen + Junge */
 const aiProfiles=[
   {name:'Nele', gender:'Frau', age:'21+', avatar:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=220&q=86', accent:'✨', posts:[
-    {img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=86',text:'Golden hour ✨'},
-    {img:'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=86',text:'Outfit of the day 🖤'},
-    {img:'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1000&q=86',text:'City mood 🌆'},
-    {img:'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=86',text:'Weekend look ✨'},
-    {img:'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=1000&q=86',text:'Soft glam 💫'},
-    {img:'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=1000&q=86',text:'Just good vibes 🤍'}
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=90',text:'Golden hour ✨'},
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=90',text:'Outfit of the day 🖤'},
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=90',text:'City mood 🌆'},
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=90',text:'Weekend look ✨'},
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=90',text:'Soft glam 💫'},
+    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=90',text:'Just good vibes 🤍'}
   ]},
   {name:'Sofia', gender:'Frau', age:'22+', avatar:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=220&q=86', accent:'💫', posts:[
-    {img:'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1000&q=86',text:'Coffee first ☕'},
-    {img:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=86',text:'Fresh look today ✨'},
-    {img:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1000&q=86',text:'Street style 🖤'},
-    {img:'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1000&q=86',text:'Sunshine mood ☀️'},
-    {img:'https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=1000&q=86',text:'Tonight ✨'},
-    {img:'https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1000&q=86',text:'Glow mode 💫'}
+    {img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=90',text:'Coffee first ☕'},
+    {img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=90',text:'Fresh look today ✨'},
+    {img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=90',text:'Street style 🖤'},
+    {img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=90',text:'Sunshine mood ☀️'},
+    {img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=90',text:'Tonight ✨'},
+    {img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=90',text:'Glow mode 💫'}
   ]},
   {name:'Lisa', gender:'Frau', age:'23+', avatar:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=220&q=86', accent:'🌸', posts:[
-    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=86',text:'Good morning 🌸'},
-    {img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1000&q=86',text:'Ready to go ✨'},
-    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Clean look 🤍'},
-    {img:'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=1000&q=86',text:'Weekend energy 💫'},
-    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=86',text:'Late night snap 🌙'},
-    {img:'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?auto=format&fit=crop&w=1000&q=86',text:'Studio vibes ✨'}
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=90',text:'Good morning 🌸'},
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=90',text:'Ready to go ✨'},
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=90',text:'Clean look 🤍'},
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=90',text:'Weekend energy 💫'},
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=90',text:'Late night snap 🌙'},
+    {img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=90',text:'Studio vibes ✨'}
   ]},
   {name:'Mert', gender:'Mann', age:'22+', avatar:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=220&q=86', accent:'⚡', posts:[
-    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=86',text:'Fresh cut ⚡'},
-    {img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1000&q=86',text:'City mode 😎'},
-    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Sharp today 🖤'},
-    {img:'https://images.unsplash.com/photo-1504257432389-52343af06ae3?auto=format&fit=crop&w=1000&q=86',text:'On the move ✈️'},
-    {img:'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=1000&q=86',text:'Weekend fit 🔥'},
-    {img:'https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=1000&q=86',text:'Night vibes 🌃'}
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=90',text:'Fresh cut ⚡'},
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=90',text:'City mode 😎'},
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=90',text:'Sharp today 🖤'},
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=90',text:'On the move ✈️'},
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=90',text:'Weekend fit 🔥'},
+    {img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=90',text:'Night vibes 🌃'}
   ]},
   {name:'Paul', gender:'Mann', age:'24+', avatar:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=220&q=86', accent:'🔥', posts:[
-    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=86',text:'No filter needed 🔥'},
-    {img:'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=1000&q=86',text:'Street mood ⚡'},
-    {img:'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=1000&q=86',text:'Today’s look 😎'},
-    {img:'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=1000&q=86',text:'Golden hour 🌇'},
-    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Classic 🖤'},
-    {img:'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=1000&q=86',text:'Weekend plans ✨'}
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=90',text:'No filter needed 🔥'},
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=90',text:'Street mood ⚡'},
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=90',text:'Today’s look 😎'},
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=90',text:'Golden hour 🌇'},
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=90',text:'Classic 🖤'},
+    {img:'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1000&q=90',text:'Weekend plans ✨'}
   ]},
   {name:'Tim', gender:'Mann', age:'23+', avatar:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=220&q=86', accent:'⭐', posts:[
-    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=86',text:'Ready ⭐'},
-    {img:'https://images.unsplash.com/photo-1492288991661-058aa541ff43?auto=format&fit=crop&w=1000&q=86',text:'Casual today 😎'},
-    {img:'https://images.unsplash.com/photo-1530268729831-4b0b9e170218?auto=format&fit=crop&w=1000&q=86',text:'Good day ✨'},
-    {img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=86',text:'Simple fit 🖤'},
-    {img:'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=1000&q=86',text:'Out & about ⚡'},
-    {img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1000&q=86',text:'Late one 🌙'}
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=90',text:'Ready ⭐'},
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=90',text:'Casual today 😎'},
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=90',text:'Good day ✨'},
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=90',text:'Simple fit 🖤'},
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=90',text:'Out & about ⚡'},
+    {img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=90',text:'Late one 🌙'}
   ]}
 ];
-const AI_STATUS_VERSION='six-adult-creators-v2-five-total';
+const AI_STATUS_VERSION='six-fixed-identities-v3-five-total';
 function loadAiStatuses(){return JSON.parse(localStorage.getItem('starsnapAiStatuses')||'[]')}
 function saveAiStatuses(v){localStorage.setItem('starsnapAiStatuses',JSON.stringify(v))}
 function timeAgo(ts){const s=Math.max(1,Math.floor((Date.now()-ts)/1000));if(s<60)return 'gerade eben';const m=Math.floor(s/60);if(m<60)return `vor ${m} Min.`;const h=Math.floor(m/60);if(h<24)return `vor ${h} Std.`;const d=Math.floor(h/24);return `vor ${d} Tag${d>1?'en':''}`;}
