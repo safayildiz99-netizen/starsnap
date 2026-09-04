@@ -1,14 +1,14 @@
-StarSnap REAL v10
+StarSnap REAL v11
 
-Neu in v10:
-- WhatsApp-artiger Story-Viewer mit Vollbild, Fortschrittsbalken, links/rechts, Pause und Schließen
-- Eigene Storys können erneut gepostet oder gelöscht werden
-- Story-Kreise und Story-Karten sind anklickbar
-- Frontkamera ist bewusst gespiegelt: rechter Arm bleibt rechts; gespeichertes Foto entspricht der Vorschau
-- Rückkamera bleibt ungespiegelt
-- Kamera/Bedienung stärker zentriert und symmetrisch
-- Spielekarten und Spiele-Overlay optisch überarbeitet
-- Level-Fortschritt im Spiel sichtbar
-- Bestehende Mediathek, Filter, Admin, Chats und Supabase-Anbindung bleiben erhalten
+Fixes in dieser Version:
+- Neuer Menüpunkt POSTEN zwischen Kamera und Mediathek
+- Posten aus Kamera, Gerät oder Mediathek
+- Frontkamera nicht gespiegelt (rechts bleibt rechts)
+- AR-Overlay an object-fit:cover angepasst, damit Bart/Haare/Glatze nicht versetzt oder riesig erscheinen
+- Bart und Schnurrbart getrennt und neu positioniert
+- Haare ohne vertikale Kamm-Striche
+- Glatzen-Overlay kleiner und nur bei echter Gesichtserkennung
+- Kameraaufnahme speichert denselben Ausschnitt wie die Vorschau
+- Mobile Navigation horizontal scrollbar, damit kein Menüpunkt verschwindet
 
-Deployment: Alle Dateien in den GitHub-Repo-Root hochladen. Vercel deployt automatisch.
+Nach Upload auf Vercel: Cmd+Shift+R / Seite neu laden. Oben muss Cloud verbunden · v11 stehen.

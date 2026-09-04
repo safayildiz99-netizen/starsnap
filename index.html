@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#08080c" />
 <link rel="manifest" href="manifest.webmanifest" />
-<title>StarSnap v10</title>
+<title>StarSnap v11</title>
 <style>
 :root{--bg:#07070a;--panel:#121219;--panel2:#1b1b24;--line:#292934;--text:#fff;--muted:#9b9baa;--yellow:#ffd534;--orange:#ff9e35;--green:#65e39b;--red:#ff656a;--blue:#77a7ff;--pink:#ff5c9d}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
@@ -17,7 +17,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 
 /* v10 camera polish */
 #video,#arCanvas{transform:none!important;transform-origin:center center}
-#video.mirror,#arCanvas.mirror{transform:scaleX(-1)!important}
+#video.mirror,#arCanvas.mirror{transform:none!important}
 #video{object-position:50% 50%!important}
 .camera-wrap{overflow:hidden}
 .camera-actions{min-width:270px;justify-content:center}
@@ -123,6 +123,11 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 
 /* v7 filters + level system */
 .game-level-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;padding:4px 9px;border-radius:999px;background:#252531;border:1px solid #3b3b48;color:#ffd534;font-size:11px;font-weight:900}.head-quiz-wrap{display:grid;grid-template-columns:1fr;gap:12px;padding:14px}.head-quiz-video{width:min(420px,100%);aspect-ratio:16/9;object-fit:cover;border-radius:18px;margin:auto;background:#09090d;transform:none;border:1px solid #33333e}.head-quiz-question{font-size:22px;font-weight:950;line-height:1.2}.head-quiz-answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.head-answer{border:1px solid #383845;border-radius:16px;padding:14px;background:#181820}.head-answer strong{display:block;font-size:18px}.head-answer small{color:#9999a8}.head-direction{font-size:12px;color:#ffd534;font-weight:900}.filter-chip.effect-chip span{overflow:hidden}.filter-chip.effect-chip:nth-child(-n+31) span{box-shadow:inset 0 0 18px rgba(255,255,255,.03)}
+
+/* v11 posting + stable AR */
+.post-page{background:radial-gradient(circle at 50% 0,rgba(255,213,52,.08),transparent 34%)}
+.post-shell{width:min(1100px,100%);margin:0 auto}.post-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}.post-actions-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:28px}.post-action-card{min-height:170px;border:1px solid #2b2b36;border-radius:24px;background:linear-gradient(145deg,#17171f,#101016);color:#fff;text-align:left;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;transition:.16s transform,.16s border-color,.16s box-shadow}.post-action-card:hover{transform:translateY(-2px);border-color:#555566;box-shadow:0 18px 44px rgba(0,0,0,.25)}.post-action-card>span{font-size:38px;margin-bottom:auto}.post-action-card strong{font-size:20px}.post-action-card small{color:var(--muted);margin-top:5px}.post-recent-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.post-recent{position:relative;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#181820;border:1px solid #262631}.post-recent img,.post-recent video{width:100%;height:100%;object-fit:cover}.post-recent button{position:absolute;left:8px;right:8px;bottom:8px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#171205;padding:9px;font-weight:950}.ar-status{position:absolute;left:50%;top:92px;transform:translateX(-50%);z-index:11;background:rgba(0,0,0,.55);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:999px;color:#ddd;font-size:10px;padding:6px 10px;display:none}.ar-status.show{display:block}
+@media(max-width:799px){.post-actions-grid{grid-template-columns:1fr}.post-action-card{min-height:120px}.post-recent-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.nav{display:flex!important;gap:0!important;overflow-x:auto;scrollbar-width:none}.nav button{flex:0 0 64px;min-width:64px}.camera-actions{left:50%!important;right:auto!important;transform:translateX(-50%)!important}.filter-row{left:50%!important;transform:translateX(-50%)!important}.cam-tools{right:12px}.stories-strip{justify-content:flex-start}}
 </style>
 </head>
 <body>
@@ -162,6 +167,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
       <button data-page="stories"><span class="ico">◉</span>Stories</button>
       <button data-page="chats"><span class="ico">💬</span>Chats</button>
       <button data-page="camera" class="active"><span class="ico">★</span>Kamera</button>
+      <button data-page="post"><span class="ico">＋</span>Posten</button>
       <button data-page="library"><span class="ico">▦</span>Mediathek</button>
       <button data-page="friends"><span class="ico">👥</span>Freunde</button>
       <button data-page="games"><span class="ico">🎮</span>Spiele</button>
@@ -174,16 +180,31 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     </div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v10 · lädt …</span></header>
+    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v11 · lädt …</span></header>
     <div class="content">
       <section class="page active" id="cameraPage" data-page="camera">
         <div class="camera-wrap"><video id="video" autoplay playsinline muted></video><canvas id="arCanvas"></canvas><div class="camera-empty" id="cameraEmpty"><div><span>⭐</span><h2>Mach deinen StarSnap</h2><p>Öffne die Kamera oder wähle ein Bild aus deiner Galerie.</p></div></div></div>
         <div class="stories-strip" id="storyStrip"><button class="story-bubble" id="myStoryBtn" style="border:0;background:none;color:white"><div class="ring"><div class="plus" id="myStoryVisual">＋</div></div><span class="story-add-badge" id="storyAddBadge">＋</span>Meine Story</button></div>
+        <div class="ar-status" id="arStatus">Gesicht wird erkannt …</div>
         <div class="cam-tools"><button id="flipCamera">↻</button><button id="toggleFilters">✨</button><button id="openGames">🎮</button></div>
         <button class="filter-scroll prev" id="filterPrev" aria-label="Filter zurück">‹</button><div class="filter-row" id="filterRow"></div><button class="filter-scroll next" id="filterNext" aria-label="Filter weiter">›</button>
         <div class="camera-actions"><button class="round" id="galleryBtn">▦</button><button class="shutter" id="shutter"></button><button class="round" id="cameraBtn">📷</button></div>
         <input class="upload-hidden" id="galleryInput" type="file" accept="image/*,video/*">
         <input class="upload-hidden" id="libraryUploadInput" type="file" accept="image/*,video/*" multiple>
+      </section>
+
+      <section class="page post-page" id="postPage" data-page="post">
+        <div class="post-shell">
+          <div class="post-head"><div><h1>Posten</h1><div class="sub">Erstelle eine neue Story mit Kamera, Gerät oder deiner Mediathek.</div></div><span class="badge">24 Stunden</span></div>
+          <div class="post-actions-grid">
+            <button class="post-action-card" id="postCameraBtn"><span>📷</span><strong>Kamera</strong><small>Jetzt ein neues Foto aufnehmen</small></button>
+            <button class="post-action-card" id="postLibraryBtn"><span>▦</span><strong>Mediathek</strong><small>Ein vorhandenes Bild erneut posten</small></button>
+            <button class="post-action-card" id="postDeviceBtn"><span>＋</span><strong>Vom Gerät</strong><small>Foto oder Video auswählen</small></button>
+          </div>
+          <div class="section-title"><h2>Zuletzt in deiner Mediathek</h2><button class="mini-btn" id="postRefreshBtn">Neu laden</button></div>
+          <div class="post-recent-grid" id="postRecentGrid"></div>
+          <input class="upload-hidden" id="postUploadInput" type="file" accept="image/*,video/*">
+        </div>
       </section>
 
       <section class="page" id="storiesPage" data-page="stories"><h1>StarStories</h1><div class="sub">Storys verschwinden automatisch nach 24 Stunden.</div><div class="story-grid" id="storiesGrid"></div><div class="ai-section" id="aiSection"><div class="ai-head"><div><h2 style="margin:0">Admin KI-Status</h2><div class="sub" style="margin:3px 0 0">Nur Administratoren sehen diesen Bereich.</div></div><span class="tag">5 je Person / Min</span></div><div class="story-grid" id="aiGrid"></div></div></section>
@@ -272,7 +293,7 @@ async function loadProfile(){
   let lastError=null;
   for(let attempt=0;attempt<3;attempt++){
     const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
-    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v10';return true}
+    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v11';return true}
     lastError=error||new Error('Profil fehlt');
     await new Promise(r=>setTimeout(r,350*(attempt+1)));
   }
@@ -284,7 +305,7 @@ async function loadProfile(){
 function avatarFor(p){return p?.avatar_url||`https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p?.display_name||p?.username||'S')}`}
 function renderProfileHeader(){if(!profile)return;$('#miniAvatar').src=avatarFor(profile);$('#miniName').textContent=profile.display_name;$('#miniUser').childNodes[0].nodeValue='@'+profile.username+' ';$('#adminPill').classList.toggle('show',profile.role==='admin');$('#profileAvatar').src=avatarFor(profile);$('#profileName').textContent=profile.display_name;$('#profileUsername').textContent='@'+profile.username;$('#profileDisplay').value=profile.display_name;$('#profileUsernameInput').value=profile.username;$('#profileUsernameInput').readOnly=true;$('#profileBio').value=profile.bio||'';$('#statRole').textContent=profile.role.toUpperCase();$('#aiSection').classList.toggle('show',profile.role==='admin');$('#adminNav').classList.toggle('show',profile.role==='admin');if(profile.role==='admin')loadAdminDashboard()}
 
-function openPage(name){if(name==='admin'&&profile?.role!=='admin')return toast('Nur Admin');$$('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===name));$$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#pageTitle').textContent={camera:'Kamera',library:'Mediathek',stories:'Stories',chats:'Chats',friends:'Freunde',games:'Spiele',profile:'Profil',admin:'Admin Studio'}[name]||'StarSnap';if(name==='stories')loadStories();if(name==='library')loadMediaLibrary();if(name==='chats')loadChatList();if(name==='friends')loadFriends();if(name==='profile')loadStats();if(name==='admin')loadAdminDashboard()}
+function openPage(name){if(name==='admin'&&profile?.role!=='admin')return toast('Nur Admin');$$('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===name));$$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#pageTitle').textContent={camera:'Kamera',post:'Posten',library:'Mediathek',stories:'Stories',chats:'Chats',friends:'Freunde',games:'Spiele',profile:'Profil',admin:'Admin Studio'}[name]||'StarSnap';if(name==='stories')loadStories();if(name==='post')loadPostPage();if(name==='library')loadMediaLibrary();if(name==='chats')loadChatList();if(name==='friends')loadFriends();if(name==='profile')loadStats();if(name==='admin')loadAdminDashboard()}
 $$('#nav button').forEach(b=>b.onclick=()=>openPage(b.dataset.page))
 
 const FILTERS=[
@@ -353,15 +374,17 @@ $('#toggleFilters').onclick=()=>$('#filterRow').classList.toggle('hidden')
 
 
 async function initFaceTracker(){if(faceLandmarker)return;try{const mod=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm');const vision=await mod.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');faceLandmarker=await mod.FaceLandmarker.createFromOptions(vision,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:'GPU'},runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:true});}catch(e){console.warn('Face tracker fallback',e);faceLandmarker='fallback'}}
-function fallbackFace(w,h){return {cx:w*.5,cy:h*.46,fw:w*.34,fh:h*.52,eyeY:h*.42,mouthY:h*.57,leftEyeX:w*.43,rightEyeX:w*.57,foreheadY:h*.25,chinY:h*.69,noseX:w*.5,noseY:h*.5}}
-function faceMetrics(lm,w,h){if(!lm)return fallbackFace(w,h);const p=i=>lm[i]||{x:.5,y:.5};const L=p(234),R=p(454),T=p(10),B=p(152),LE=p(33),RE=p(263),M=p(13),N=p(1);return {cx:(L.x+R.x)*w/2,cy:(T.y+B.y)*h/2,fw:Math.max(120,(R.x-L.x)*w),fh:Math.max(160,(B.y-T.y)*h),eyeY:(LE.y+RE.y)*h/2,mouthY:M.y*h,leftEyeX:LE.x*w,rightEyeX:RE.x*w,foreheadY:T.y*h,chinY:B.y*h,noseX:N.x*w,noseY:N.y*h}}
+function fallbackFace(w,h){return {cx:w*.5,cy:h*.46,fw:w*.34,fh:h*.52,eyeY:h*.42,mouthY:h*.57,leftEyeX:w*.43,rightEyeX:w*.57,foreheadY:h*.25,chinY:h*.69,noseX:w*.5,noseY:h*.5,mouthLeftX:w*.44,mouthRightX:w*.56,upperLipY:h*.555,lowerLipY:h*.585,sampleNX:.42,sampleNY:.54,leftEyeNX:.43,leftEyeNY:.42,rightEyeNX:.57,rightEyeNY:.42,sourceFaceWidthNorm:.34}}
+function coverGeometry(video,w,h){const vw=video?.videoWidth||w,vh=video?.videoHeight||h;const scale=Math.max(w/vw,h/vh),dw=vw*scale,dh=vh*scale;return {vw,vh,scale,dw,dh,ox:(w-dw)/2,oy:(h-dh)/2}}
+function mapPoint(p,g){return {x:g.ox+p.x*g.dw,y:g.oy+p.y*g.dh}}
+function faceMetrics(lm,w,h,video){if(!lm)return null;const p=i=>lm[i]||{x:.5,y:.5};const g=coverGeometry(video,w,h);const L=p(234),R=p(454),T=p(10),B=p(152),LE=p(33),RE=p(263),M=p(13),N=p(1),ML=p(61),MR=p(291),UL=p(0),LL=p(17),CHEEK=p(123);const l=mapPoint(L,g),r=mapPoint(R,g),t=mapPoint(T,g),b=mapPoint(B,g),le=mapPoint(LE,g),re=mapPoint(RE,g),m=mapPoint(M,g),n=mapPoint(N,g),ml=mapPoint(ML,g),mr=mapPoint(MR,g),ul=mapPoint(UL,g),ll=mapPoint(LL,g);return {cx:(l.x+r.x)/2,cy:(t.y+b.y)/2,fw:Math.max(70,Math.abs(r.x-l.x)),fh:Math.max(95,b.y-t.y),eyeY:(le.y+re.y)/2,mouthY:m.y,leftEyeX:le.x,rightEyeX:re.x,foreheadY:t.y,chinY:b.y,noseX:n.x,noseY:n.y,mouthLeftX:ml.x,mouthRightX:mr.x,upperLipY:ul.y,lowerLipY:ll.y,sampleNX:CHEEK.x,sampleNY:CHEEK.y,leftEyeNX:LE.x,leftEyeNY:LE.y,rightEyeNX:RE.x,rightEyeNY:RE.y,sourceFaceWidthNorm:Math.max(.08,Math.abs(R.x-L.x))}}
 function drawStar(ctx,x,y,r,fill='#ffd534'){ctx.save();ctx.translate(x,y);ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2? r*.42:r;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.restore()}
 function drawHeart(ctx,x,y,s,fill='#ff5c9a'){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.beginPath();ctx.moveTo(0,.32);ctx.bezierCurveTo(-.62,-.05,-.52,-.58,0,-.28);ctx.bezierCurveTo(.52,-.58,.62,-.05,0,.32);ctx.fillStyle=fill;ctx.fill();ctx.restore()}
 function prand(i,seed=17){const x=Math.sin((i+1)*12.9898+seed*78.233)*43758.5453;return x-Math.floor(x)}
-const skinSampler=document.createElement('canvas');skinSampler.width=3;skinSampler.height=3;const skinCtx=skinSampler.getContext('2d',{willReadFrequently:true});
-function sampleSkinTone(video,m){try{const sx=Math.max(2,Math.min(video.videoWidth-4,m.cx-m.fw*.18)),sy=Math.max(2,Math.min(video.videoHeight-4,m.eyeY+m.fh*.08));skinCtx.clearRect(0,0,3,3);skinCtx.drawImage(video,sx,sy,6,6,0,0,3,3);const d=skinCtx.getImageData(0,0,3,3).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++}return {r:r/n,g:g/n,b:b/n}}catch{return {r:190,g:135,b:105}}}
+const skinSampler=document.createElement('canvas');skinSampler.width=4;skinSampler.height=4;const skinCtx=skinSampler.getContext('2d',{willReadFrequently:true});
+function sampleSkinTone(video,m){try{const sx=Math.max(3,Math.min(video.videoWidth-6,m.sampleNX*video.videoWidth)),sy=Math.max(3,Math.min(video.videoHeight-6,m.sampleNY*video.videoHeight));skinCtx.clearRect(0,0,4,4);skinCtx.drawImage(video,sx-4,sy-4,8,8,0,0,4,4);const d=skinCtx.getImageData(0,0,4,4).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++}return {r:r/n,g:g/n,b:b/n}}catch{return {r:190,g:135,b:105}}}
 function rgbaTone(t,a=1,shift=0){return `rgba(${Math.max(0,Math.min(255,t.r+shift))},${Math.max(0,Math.min(255,t.g+shift))},${Math.max(0,Math.min(255,t.b+shift))},${a})`}
-function drawEyeZoom(ctx,video,x,y,fw,fh,scale=1.28,tint=null){if(!video||!video.videoWidth)return;const sw=fw*.19,sh=fh*.11,dw=sw*scale,dh=sh*scale;ctx.save();ctx.beginPath();ctx.ellipse(x,y,dw*.49,dh*.48,0,0,Math.PI*2);ctx.clip();ctx.drawImage(video,x-sw/2,y-sh/2,sw,sh,x-dw/2,y-dh/2,dw,dh);if(tint){ctx.fillStyle=tint;ctx.globalCompositeOperation='screen';ctx.fillRect(x-dw/2,y-dh/2,dw,dh)}ctx.restore()}
+function drawEyeZoom(ctx,video,x,y,fw,fh,scale=1.28,tint=null,srcNX=.5,srcNY=.5,srcFaceNorm=.34){if(!video||!video.videoWidth)return;const sw=video.videoWidth*srcFaceNorm*.30,sh=sw*.56,sx=srcNX*video.videoWidth,sy=srcNY*video.videoHeight,dw=fw*.19*scale,dh=fh*.11*scale;ctx.save();ctx.beginPath();ctx.ellipse(x,y,dw*.52,dh*.55,0,0,Math.PI*2);ctx.clip();ctx.drawImage(video,sx-sw/2,sy-sh/2,sw,sh,x-dw/2,y-dh/2,dw,dh);if(tint){ctx.fillStyle=tint;ctx.globalCompositeOperation='screen';ctx.fillRect(x-dw/2,y-dh/2,dw,dh)}ctx.restore()}
 function smoothFaceMetrics(raw){
  if(!raw)return null;
  if(!smoothedFace){smoothedFace={...raw};return smoothedFace}
@@ -371,76 +394,45 @@ function smoothFaceMetrics(raw){
 }
 function drawArEffect(ctx,m,e,w,h,video){
  if(!m)return;
- const {cx,fw,fh,eyeY,mouthY,leftEyeX,rightEyeX,foreheadY,chinY}=m;
+ const {cx,fw,fh,eyeY,mouthY,leftEyeX,rightEyeX,foreheadY,chinY,mouthLeftX,mouthRightX,upperLipY,lowerLipY}=m;
  const skin=sampleSkinTone(video,m);
  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
- if(e==='beard'||e==='moustache'){
-   const dark={r:Math.max(20,skin.r*.25),g:Math.max(16,skin.g*.20),b:Math.max(14,skin.b*.17)};
-   if(e==='beard'){
-     // very soft beard mass only around jaw/chin – no painted block
-     ctx.save();ctx.filter='blur(4px)';ctx.globalAlpha=.12;ctx.fillStyle=`rgb(${dark.r},${dark.g},${dark.b})`;
-     ctx.beginPath();ctx.moveTo(cx-fw*.34,mouthY+fh*.03);ctx.quadraticCurveTo(cx-fw*.38,chinY-fh*.05,cx,chinY+fh*.015);ctx.quadraticCurveTo(cx+fw*.38,chinY-fh*.05,cx+fw*.34,mouthY+fh*.03);ctx.quadraticCurveTo(cx,mouthY+fh*.16,cx-fw*.34,mouthY+fh*.03);ctx.fill();ctx.restore();
-     for(let i=0;i<165;i++){
-       const nx=prand(i,14)*2-1, ny=prand(i,27);
-       const yy=mouthY+fh*(.035+ny*.255);
-       const allowed=.18+.20*ny;
-       if(Math.abs(nx)>allowed*2.15)continue;
-       const xx=cx+nx*fw*.43;
-       // keep upper-lip and mouth area clean
-       if(yy<mouthY+fh*.065 && Math.abs(xx-cx)<fw*.20)continue;
-       const side=xx<cx?-1:1,len=fh*(.009+.015*prand(i,38));
-       ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.18+.38*prand(i,45)})`;
-       ctx.lineWidth=.55+1.05*prand(i,55);
-       ctx.beginPath();ctx.moveTo(xx,yy);ctx.quadraticCurveTo(xx+side*1.0,yy+len*.45,xx+side*1.8,yy+len);ctx.stroke();
-     }
+ if(e==='beard'){
+   const dark={r:Math.max(18,skin.r*.22),g:Math.max(14,skin.g*.18),b:Math.max(12,skin.b*.15)};
+   // Natural-looking stubble: jaw + chin only. No fake moustache/eyebrow arcs.
+   for(let i=0;i<210;i++){
+     const a=prand(i,19)*Math.PI, side=(prand(i,29)*2-1), depth=prand(i,39);
+     const yy=mouthY+fh*(.055+.245*depth), jawWidth=fw*(.23+.15*depth), xx=cx+side*jawWidth;
+     if(Math.abs(xx-cx)<fw*.13 && yy<mouthY+fh*.11)continue;
+     const len=fh*(.005+.009*prand(i,49));
+     ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.16+.34*prand(i,59)})`;ctx.lineWidth=.45+.7*prand(i,69);
+     ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+(prand(i,79)-.5)*2,yy+len);ctx.stroke();
    }
-   // fine moustache, directly above the upper lip instead of eyebrow-like arcs
-   for(let i=0;i<84;i++){
-     const t=prand(i,61)*2-1;
-     const xx=cx+t*fw*.185;
-     const yy=mouthY-fh*(.018-.010*Math.abs(t)) + (prand(i,66)-.5)*fh*.009;
-     const side=t<0?-1:1,len=fw*(.010+.012*prand(i,71));
-     ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.22+.45*prand(i,75)})`;
-     ctx.lineWidth=.45+.85*prand(i,81);
-     ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+side*len,yy+fh*(.003+.005*prand(i,83)));ctx.stroke();
-   }
- }
- else if(e==='hair'){
-   const baseR=Math.max(24,skin.r*.27),baseG=Math.max(17,skin.g*.20),baseB=Math.max(13,skin.b*.15);
-   // soft root shadow following the detected forehead only
-   ctx.save();ctx.filter='blur(3px)';ctx.globalAlpha=.16;ctx.strokeStyle=`rgb(${baseR},${baseG},${baseB})`;ctx.lineWidth=fh*.055;
-   ctx.beginPath();ctx.arc(cx,foreheadY-fh*.015,fw*.39,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.restore();
-   // individual stable strands; no solid helmet shape
-   for(let i=0;i<250;i++){
-     const u=prand(i,101)*2-1, edge=Math.abs(u);
-     const rootX=cx+u*fw*.43;
-     const rootY=foreheadY-fh*(.012+.075*(1-edge)) + (prand(i,105)-.5)*fh*.018;
-     const side=u<0?-1:1;
-     const sideStrand=edge>.72;
-     const endX=rootX + side*fw*((sideStrand?.055:.018)+.035*prand(i,108));
-     const endY=sideStrand ? rootY+fh*(.16+.18*prand(i,111)) : rootY-fh*(.12+.17*prand(i,114));
-     ctx.strokeStyle=`rgba(${Math.round(baseR+20*prand(i,118))},${Math.round(baseG+13*prand(i,121))},${Math.round(baseB+9*prand(i,124))},${.24+.48*prand(i,127)})`;
-     ctx.lineWidth=.55+1.25*prand(i,130);
-     ctx.beginPath();ctx.moveTo(rootX,rootY);ctx.quadraticCurveTo((rootX+endX)/2+side*fw*.01,(rootY+endY)/2,endX,endY);ctx.stroke();
-   }
- }
- else if(e==='bald'){
-   // intentionally smaller, face-tracked scalp patch. Never draw when no face is detected.
-   const topY=foreheadY-fh*.235, baseY=foreheadY+fh*.025;
-   ctx.save();ctx.filter='blur(2px)';
-   for(let layer=0;layer<5;layer++){
-     const shrink=layer*fw*.008,alpha=.16+layer*.12;
-     const grad=ctx.createLinearGradient(cx,topY,cx,baseY);grad.addColorStop(0,rgbaTone(skin,alpha,15));grad.addColorStop(.72,rgbaTone(skin,alpha,2));grad.addColorStop(1,rgbaTone(skin,alpha,-6));
-     ctx.beginPath();ctx.moveTo(cx-fw*.43+shrink,baseY);ctx.quadraticCurveTo(cx-fw*.48+shrink,foreheadY-fh*.14,cx,topY+shrink*.2);ctx.quadraticCurveTo(cx+fw*.48-shrink,foreheadY-fh*.14,cx+fw*.43-shrink,baseY);ctx.quadraticCurveTo(cx,foreheadY-fh*.005,cx-fw*.43+shrink,baseY);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+ } else if(e==='moustache'){
+   const dark={r:Math.max(16,skin.r*.20),g:Math.max(12,skin.g*.16),b:Math.max(10,skin.b*.13)};
+   const lipW=Math.max(34,mouthRightX-mouthLeftX), y=upperLipY-fh*.010;
+   ctx.save();ctx.filter='blur(.45px)';
+   for(const side of [-1,1]){
+     ctx.beginPath();ctx.moveTo(cx,y);ctx.bezierCurveTo(cx+side*lipW*.12,y-fh*.018,cx+side*lipW*.32,y-fh*.020,cx+side*lipW*.47,y+fh*.004);ctx.bezierCurveTo(cx+side*lipW*.30,y+fh*.016,cx+side*lipW*.10,y+fh*.012,cx,y);ctx.closePath();ctx.fillStyle=`rgba(${dark.r},${dark.g},${dark.b},.34)`;ctx.fill();
    }
    ctx.restore();
-   ctx.strokeStyle=rgbaTone(skin,.16,-28);ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,foreheadY-fh*.11,fw*.39,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
+   for(let i=0;i<70;i++){const t=prand(i,61)*2-1,xx=cx+t*lipW*.47,yy=y+(prand(i,67)-.5)*fh*.020,len=fh*(.006+.006*prand(i,73));ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.20+.34*prand(i,81)})`;ctx.lineWidth=.45+.55*prand(i,87);ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+(t<0?-1:1)*len*.6,yy+len*.25);ctx.stroke()}
+ } else if(e==='hair'){
+   // Soft curved locks that follow the detected hairline; no vertical comb / helmet.
+   const baseR=Math.max(20,skin.r*.22),baseG=Math.max(14,skin.g*.16),baseB=Math.max(10,skin.b*.12);
+   ctx.save();ctx.filter='blur(2px)';ctx.strokeStyle=`rgba(${baseR},${baseG},${baseB},.18)`;ctx.lineWidth=Math.max(6,fh*.025);ctx.beginPath();ctx.arc(cx,foreheadY-fh*.035,fw*.40,Math.PI*1.10,Math.PI*1.90);ctx.stroke();ctx.restore();
+   for(let i=0;i<92;i++){const u=prand(i,101)*2-1,edge=Math.abs(u),rootX=cx+u*fw*.41,rootY=foreheadY-fh*(.018+.050*(1-edge));const side=u<0?-1:1;const lift=fh*(.055+.10*prand(i,109));const endX=rootX+side*fw*(.025+.07*prand(i,113));const endY=rootY-(1-edge)*lift+edge*fh*(.035+.09*prand(i,117));ctx.strokeStyle=`rgba(${Math.round(baseR+24*prand(i,121))},${Math.round(baseG+17*prand(i,125))},${Math.round(baseB+12*prand(i,129))},${.18+.38*prand(i,133)})`;ctx.lineWidth=.5+1.0*prand(i,137);ctx.beginPath();ctx.moveTo(rootX,rootY);ctx.bezierCurveTo(rootX+side*fw*.018,rootY-lift*.35,endX-side*fw*.015,(rootY+endY)/2,endX,endY);ctx.stroke()}
+ } else if(e==='bald'){
+   // Small feathered scalp replacement, strictly bounded to the tracked head.
+   const topY=foreheadY-fh*.19,baseY=foreheadY+fh*.018,half=fw*.37;
+   ctx.save();ctx.filter='blur(3px)';for(let k=0;k<7;k++){const inset=k*fw*.006;ctx.beginPath();ctx.moveTo(cx-half+inset,baseY);ctx.quadraticCurveTo(cx-half*.92+inset,foreheadY-fh*.13,cx,topY+inset*.15);ctx.quadraticCurveTo(cx+half*.92-inset,foreheadY-fh*.13,cx+half-inset,baseY);ctx.quadraticCurveTo(cx,foreheadY-fh*.008,cx-half+inset,baseY);ctx.closePath();ctx.fillStyle=rgbaTone(skin,.08+k*.055,5-k);ctx.fill()}ctx.restore();
+   ctx.strokeStyle=rgbaTone(skin,.10,-24);ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,foreheadY-fh*.09,fw*.34,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
  }
- else if(['dog','cat','bunny'].includes(e)){const y=foreheadY-fh*.12;if(e==='bunny'){ctx.fillStyle='#f4d7dc';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.23,y-fh*.24,fw*.11,fh*.28,sx*.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,145,170,.45)';ctx.beginPath();ctx.ellipse(cx+sx*fw*.23,y-fh*.24,fw*.055,fh*.22,sx*.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f4d7dc'}}else{ctx.fillStyle=e==='dog'?'#8b5a3c':'#9a806c';for(const sx of [-1,1]){ctx.beginPath();ctx.moveTo(cx+sx*fw*.16,y);ctx.lineTo(cx+sx*fw*.33,y-fh*.23);ctx.lineTo(cx+sx*fw*.39,y+fh*.02);ctx.closePath();ctx.fill()}}ctx.fillStyle=e==='dog'?'#3d2419':'#5b4034';ctx.beginPath();ctx.ellipse(cx,mouthY-fh*.11,fw*.075,fh*.04,0,0,Math.PI*2);ctx.fill()}
+ else if(['dog' ,'cat','bunny'].includes(e)){const y=foreheadY-fh*.12;if(e==='bunny'){ctx.fillStyle='#f4d7dc';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.23,y-fh*.24,fw*.11,fh*.28,sx*.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,145,170,.45)';ctx.beginPath();ctx.ellipse(cx+sx*fw*.23,y-fh*.24,fw*.055,fh*.22,sx*.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f4d7dc'}}else{ctx.fillStyle=e==='dog'?'#8b5a3c':'#9a806c';for(const sx of [-1,1]){ctx.beginPath();ctx.moveTo(cx+sx*fw*.16,y);ctx.lineTo(cx+sx*fw*.33,y-fh*.23);ctx.lineTo(cx+sx*fw*.39,y+fh*.02);ctx.closePath();ctx.fill()}}ctx.fillStyle=e==='dog'?'#3d2419':'#5b4034';ctx.beginPath();ctx.ellipse(cx,mouthY-fh*.11,fw*.075,fh*.04,0,0,Math.PI*2);ctx.fill()}
  else if(e==='makeup'||e==='beauty'){ctx.fillStyle='rgba(255,73,135,.10)';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.25,eyeY+fh*.14,fw*.105,fh*.05,0,0,Math.PI*2);ctx.fill()}ctx.strokeStyle='rgba(124,22,52,.48)';ctx.lineWidth=Math.max(2,fw*.007);ctx.beginPath();ctx.moveTo(cx-fw*.115,mouthY+fh*.006);ctx.quadraticCurveTo(cx,mouthY+fh*.024,cx+fw*.115,mouthY+fh*.006);ctx.stroke();ctx.strokeStyle='rgba(82,44,72,.28)';ctx.lineWidth=Math.max(2,fw*.006);for(const x of [leftEyeX,rightEyeX]){ctx.beginPath();ctx.moveTo(x-fw*.09,eyeY-fh*.015);ctx.quadraticCurveTo(x,eyeY-fh*.04,x+fw*.09,eyeY-fh*.01);ctx.stroke()}}
  else if(e==='blush'){ctx.fillStyle='rgba(255,97,143,.18)';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.27,eyeY+fh*.15,fw*.105,fh*.052,0,0,Math.PI*2);ctx.fill()}}
  else if(e==='freckles'){ctx.fillStyle='rgba(115,72,48,.48)';for(let i=0;i<30;i++){const x=cx+(prand(i,2)-.5)*fw*.46,y=eyeY+fh*(.075+.075*prand(i,8));ctx.beginPath();ctx.arc(x,y,1+1.3*prand(i,10),0,Math.PI*2);ctx.fill()}}
- else if(e==='bigeyes'||e==='animeeyes'){drawEyeZoom(ctx,video,leftEyeX,eyeY,fw,fh,e==='animeeyes'?1.42:1.22,e==='animeeyes'?'rgba(92,121,255,.06)':null);drawEyeZoom(ctx,video,rightEyeX,eyeY,fw,fh,e==='animeeyes'?1.42:1.22,e==='animeeyes'?'rgba(92,121,255,.06)':null)}
+ else if(e==='bigeyes'||e==='animeeyes'){drawEyeZoom(ctx,video,leftEyeX,eyeY,fw,fh,e==='animeeyes'?1.42:1.22,e==='animeeyes'?'rgba(92,121,255,.06)':null,m.leftEyeNX,m.leftEyeNY,m.sourceFaceWidthNorm);drawEyeZoom(ctx,video,rightEyeX,eyeY,fw,fh,e==='animeeyes'?1.42:1.22,e==='animeeyes'?'rgba(92,121,255,.06)':null,m.rightEyeNX,m.rightEyeNY,m.sourceFaceWidthNorm)}
  else if(e==='hearts'){for(let i=0;i<7;i++)drawHeart(ctx,cx+(i-3)*fw*.13,foreheadY-fh*(.18+.04*(i%2)),Math.max(18,fw*.045))}
  else if(e==='butterfly'){ctx.font=`${Math.round(fw*.18)}px system-ui`;ctx.fillText('🦋',cx-fw*.5,foreheadY);ctx.fillText('🦋',cx+fw*.25,foreheadY-fh*.1)}
  else if(e==='flowercrown'){ctx.font=`${Math.round(fw*.16)}px system-ui`;for(let i=-3;i<=3;i++)ctx.fillText(i%2?'🌸':'🌼',cx+i*fw*.12,foreheadY-fh*.14+Math.abs(i)*2)}
@@ -463,29 +455,30 @@ function drawArEffect(ctx,m,e,w,h,video){
 async function startArLoop(){
  if(arLoopRunning)return;arLoopRunning=true;
  const loop=()=>{
-  const v=$('#video'),c=$('#arCanvas');if(!arLoopRunning)return;
+  const v=$('#video'),c=$('#arCanvas');if(!arLoopRunning)return;if(!$('#cameraPage').classList.contains('active')){requestAnimationFrame(loop);return;}
   if(v&&v.readyState>=2&&selectedEffect!=='normal'){
-   if(c.width!==v.videoWidth||c.height!==v.videoHeight){c.width=v.videoWidth;c.height=v.videoHeight;smoothedFace=null}
+   const rect=$('#cameraPage').getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1),cw=Math.max(2,Math.round(rect.width*dpr)),ch=Math.max(2,Math.round(rect.height*dpr));if(c.width!==cw||c.height!==ch){c.width=cw;c.height=ch;smoothedFace=null}
    const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
    if(faceLandmarker&&faceLandmarker!=='fallback'&&v.currentTime!==lastVideoTime){
     try{const res=faceLandmarker.detectForVideo(v,performance.now());const next=res.faceLandmarks?.[0]||null;lastVideoTime=v.currentTime;if(next){lastFaceLandmarks=next;faceLostFrames=0}else if(++faceLostFrames>4){lastFaceLandmarks=null;smoothedFace=null}}catch{}
    }
    const freeEffect=['rank','which','number'].includes(selectedEffect);
    let m=null;
-   if(lastFaceLandmarks)m=smoothFaceMetrics(faceMetrics(lastFaceLandmarks,c.width,c.height));
+   if(lastFaceLandmarks)m=smoothFaceMetrics(faceMetrics(lastFaceLandmarks,c.width,c.height,v));
    else if(freeEffect)m=fallbackFace(c.width,c.height);
-   if(m){drawArEffect(ctx,m,selectedEffect,c.width,c.height,v);c.style.display='block'}else{c.style.display='none'}
-  }else if(c){const ctx=c.getContext('2d');ctx?.clearRect(0,0,c.width,c.height);c.style.display='none'}
+   if(m){drawArEffect(ctx,m,selectedEffect,c.width,c.height,v);c.style.display='block';$('#arStatus')?.classList.remove('show')}else{c.style.display='none';if(!freeEffect&&['beard','moustache','hair','bald','makeup','beauty','blush','freckles','bigeyes','animeeyes','dog','cat','bunny','roundglasses','pinkglasses','starglasses','sunglasses'].includes(selectedEffect)){$('#arStatus').textContent='Gesicht vollständig in die Kamera halten';$('#arStatus').classList.add('show')}}
+  }else if(c){const ctx=c.getContext('2d');ctx?.clearRect(0,0,c.width,c.height);c.style.display='none';$('#arStatus')?.classList.remove('show')}
   requestAnimationFrame(loop)
  };
  requestAnimationFrame(loop)
 }
 
-async function enableCamera(){try{stream?.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});const v=$('#video');v.srcObject=stream;v.classList.toggle('mirror',facing==='user');$('#arCanvas').classList.toggle('mirror',facing==='user');await v.play().catch(()=>{});v.style.display='block';v.style.filter=selectedFilter;$('#cameraEmpty').style.display='none';await initFaceTracker();startArLoop();toast(facing==='user'?'Frontkamera aktiv · gespiegelt':'Rückkamera aktiv')}catch(e){console.error(e);toast('Kamera-Zugriff nicht erlaubt')}}
+async function enableCamera(){try{stream?.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});const v=$('#video');v.srcObject=stream;v.classList.remove('mirror');$('#arCanvas').classList.remove('mirror');await v.play().catch(()=>{});v.style.display='block';v.style.filter=selectedFilter;$('#cameraEmpty').style.display='none';lastFaceLandmarks=null;smoothedFace=null;faceLostFrames=0;await initFaceTracker();startArLoop();toast(facing==='user'?'Frontkamera aktiv · nicht gespiegelt':'Rückkamera aktiv')}catch(e){console.error(e);toast('Kamera-Zugriff nicht erlaubt')}}
 $('#cameraBtn').onclick=enableCamera;$('#flipCamera').onclick=()=>{facing=facing==='user'?'environment':'user';enableCamera()};$('#galleryBtn').onclick=openLibraryComposer;
-$('#galleryInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const item=await saveToMediaLibrary(f,'upload');if(item)await postLibraryItemToStory(item)}
+$('#galleryInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const item=await saveToMediaLibrary(f,'upload');e.target.value='';if(item)await postLibraryItemToStory(item)}
 $('#libraryUploadBtn').onclick=()=>$('#libraryUploadInput').click();$('#libraryUploadInput').onchange=async e=>{const files=[...(e.target.files||[])];for(const f of files)await saveToMediaLibrary(f,'upload');e.target.value='';await loadMediaLibrary()}
-$('#shutter').onclick=async()=>{const v=$('#video');if(!v.videoWidth)return toast('Kamera zuerst öffnen');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d');const mirrored=facing==='user';ctx.filter=selectedFilter;if(mirrored){ctx.save();ctx.translate(c.width,0);ctx.scale(-1,1);ctx.drawImage(v,0,0,c.width,c.height);ctx.restore()}else ctx.drawImage(v,0,0,c.width,c.height);ctx.filter='none';const ar=$('#arCanvas');if(selectedEffect!=='normal'&&ar.width&&ar.height){if(mirrored){ctx.save();ctx.translate(c.width,0);ctx.scale(-1,1);ctx.drawImage(ar,0,0,c.width,c.height);ctx.restore()}else ctx.drawImage(ar,0,0,c.width,c.height)}const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));const file=new File([blob],`snap-${Date.now()}.jpg`,{type:'image/jpeg'});const item=await saveToMediaLibrary(file,'camera',{width:c.width,height:c.height});if(item){toast('In Mediathek gespeichert ★');await postLibraryItemToStory(item)}}
+function drawVideoCover(ctx,video,w,h){const g=coverGeometry(video,w,h);ctx.drawImage(video,0,0,g.vw,g.vh,g.ox,g.oy,g.dw,g.dh)}
+$('#shutter').onclick=async()=>{const v=$('#video');if(!v.videoWidth)return toast('Kamera zuerst öffnen');const wrap=$('#cameraPage').getBoundingClientRect(),ratio=Math.min(2,window.devicePixelRatio||1),w=Math.max(720,Math.round(wrap.width*ratio)),h=Math.max(900,Math.round(wrap.height*ratio));const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.filter=selectedFilter;drawVideoCover(ctx,v,w,h);ctx.filter='none';if(selectedEffect!=='normal'){const free=['rank','which','number'].includes(selectedEffect);let m=lastFaceLandmarks?faceMetrics(lastFaceLandmarks,w,h,v):null;if(!m&&free)m=fallbackFace(w,h);if(m)drawArEffect(ctx,m,selectedEffect,w,h,v)}const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.93));const file=new File([blob],`snap-${Date.now()}.jpg`,{type:'image/jpeg'});const item=await saveToMediaLibrary(file,'camera',{width:w,height:h});if(item){toast('In Mediathek gespeichert ★');await postLibraryItemToStory(item)}}
 
 let mediaItems=[],mediaFilter='all';
 function mediaSignedUrl(path){return supabase.storage.from('media-library').createSignedUrl(path,60*60)}
@@ -503,6 +496,9 @@ async function openLibraryComposer(){if(!session)return;$('#libraryModal').class
 function closeLibraryComposer(){$('#libraryModal').classList.remove('show')}
 async function loadComposerMedia(){const rows=await getMediaWithUrls();const grid=$('#composerGrid');grid.innerHTML=rows.length?rows.slice(0,120).map(x=>`<div class="composer-item">${x.media_kind==='image'?`<img src="${escapeHtml(x.signed_url)}">`:`<div style="display:grid;place-items:center;height:100%">🎬</div>`}<button data-composer-post="${x.id}">Posten</button></div>`).join(''):'<div class="media-empty" style="grid-column:1/-1">Deine Mediathek ist noch leer. Lade zuerst ein Foto vom Gerät oder nimm eins mit der Kamera auf.</div>';$$('[data-composer-post]').forEach(b=>b.onclick=async()=>{const x=rows.find(i=>i.id===b.dataset.composerPost);if(x)await postLibraryItemToStory(x)})}
 $('#closeLibraryModal').onclick=closeLibraryComposer;$('#composerRefreshBtn').onclick=loadComposerMedia;$('#composerDeviceBtn').onclick=()=>$('#galleryInput').click();$('#libraryModal').onclick=e=>{if(e.target===$('#libraryModal'))closeLibraryComposer()};$$('[data-media-filter]').forEach(b=>b.onclick=()=>{$$('[data-media-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');mediaFilter=b.dataset.mediaFilter;renderMediaGrid()});
+async function loadPostPage(){if(!session)return;const rows=await getMediaWithUrls();const grid=$('#postRecentGrid');if(!grid)return;grid.innerHTML=rows.length?rows.slice(0,15).map(x=>`<article class="post-recent">${x.media_kind==='image'?`<img src="${escapeHtml(x.signed_url)}" alt="">`:`<video src="${escapeHtml(x.signed_url)}" muted playsinline></video>`}<button data-post-recent="${x.id}">Als Story posten</button></article>`).join(''):'<div class="media-empty" style="grid-column:1/-1">Deine Mediathek ist noch leer. Nimm ein Foto auf oder lade eins vom Gerät.</div>';$$('[data-post-recent]').forEach(b=>b.onclick=async()=>{const x=rows.find(i=>i.id===b.dataset.postRecent);if(x)await postLibraryItemToStory(x)})}
+$('#postCameraBtn').onclick=async()=>{openPage('camera');await enableCamera()};$('#postLibraryBtn').onclick=openLibraryComposer;$('#postDeviceBtn').onclick=()=>$('#postUploadInput').click();$('#postRefreshBtn').onclick=loadPostPage;$('#postUploadInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const item=await saveToMediaLibrary(f,'upload');e.target.value='';if(item){await postLibraryItemToStory(item);await loadPostPage()}};
+
 async function uploadStoryFile(file){if(!session)return;const ext=(file.name.split('.').pop()||'jpg').toLowerCase(),path=`${session.user.id}/${Date.now()}-${crypto.randomUUID()}.${ext}`;toast('Story wird hochgeladen …');const {error:uerr}=await supabase.storage.from('stories').upload(path,file,{contentType:file.type,upsert:false});if(uerr)return toast('Upload fehlgeschlagen');const kind=file.type.startsWith('video/')?'video':'image';const {error}=await supabase.from('stories').insert({user_id:session.user.id,media_kind:kind,media_path:path});if(error)return toast('Story konnte nicht gespeichert werden');toast('Story veröffentlicht ★');loadStories();loadStats()}
 function storyPublicUrl(path){return supabase.storage.from('stories').getPublicUrl(path).data.publicUrl}
 
@@ -817,7 +813,7 @@ supabase.auth.onAuthStateChange((event,s)=>{
     setTimeout(()=>initializeSignedIn().catch(e=>console.error('initializeSignedIn',e)),0)
   }
 })
-window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v10'});
+window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v11'});
 boot()
 </script>
 </body>
