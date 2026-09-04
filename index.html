@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#08080c" />
 <link rel="manifest" href="manifest.webmanifest" />
-<title>StarSnap v9</title>
+<title>StarSnap v10</title>
 <style>
 :root{--bg:#07070a;--panel:#121219;--panel2:#1b1b24;--line:#292934;--text:#fff;--muted:#9b9baa;--yellow:#ffd534;--orange:#ff9e35;--green:#65e39b;--red:#ff656a;--blue:#77a7ff;--pink:#ff5c9d}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
@@ -14,8 +14,58 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 .main{position:relative;overflow:hidden}.topbar{position:absolute;z-index:30;left:0;right:0;top:0;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(8,8,12,.82);backdrop-filter:blur(16px);border-bottom:1px solid #202028}.topbar strong{font-size:18px}.content{position:absolute;inset:76px 0 0;overflow:auto}.page{display:none;min-height:100%;padding:28px clamp(18px,4vw,60px) 60px}.page.active{display:block}.page h1{font-size:36px;letter-spacing:-1.3px;margin:0 0 4px}.sub{color:var(--muted);font-size:13px;margin-bottom:22px}.grid{display:grid;gap:14px}.card{background:var(--panel);border:1px solid #23232e;border-radius:22px;padding:16px}.empty{padding:34px;text-align:center;color:#777786;border:1px dashed #2c2c37;border-radius:22px}
 /* camera */
 #cameraPage{padding:0;overflow:hidden}.camera-wrap{position:absolute;inset:0;background:radial-gradient(circle at 70% 15%,rgba(255,213,52,.16),transparent 28%),linear-gradient(145deg,#161620,#08080d)}#video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.camera-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:120px 30px}.camera-empty span{font-size:82px}.camera-empty h2{font-size:32px;line-height:1.05;margin:10px 0 8px}.camera-empty p{color:#b0b0bd;max-width:350px;margin:auto;font-size:13px}.stories-strip{position:absolute;left:24px;right:24px;top:18px;display:flex;gap:10px;overflow:auto;z-index:8;scrollbar-width:none}.story-bubble{flex:0 0 62px;text-align:center;font-size:10px;color:#fff}.story-bubble .ring{width:58px;height:58px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--yellow),var(--pink),var(--blue));margin:auto auto 4px}.story-bubble img,.story-bubble .plus{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #111;background:#222}.story-bubble .plus{display:grid;place-items:center;font-size:25px}.cam-tools{position:absolute;right:22px;top:105px;z-index:10;display:grid;gap:9px}.cam-tools button{width:44px;height:44px;border:0;border-radius:14px;background:rgba(0,0,0,.48);color:white;backdrop-filter:blur(10px)}.filter-row{position:absolute;left:50%;transform:translateX(-50%);bottom:100px;width:min(850px,calc(100% - 120px));display:flex;gap:10px;overflow:auto;background:rgba(7,7,10,.66);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:10px 14px;scrollbar-width:none;z-index:10}.filter-chip{flex:0 0 69px;border:0;background:transparent;color:#fff;text-align:center;font-size:9px}.filter-chip span{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;margin:0 auto 5px;background:#272732;border:2px solid #444452;font-size:19px}.filter-chip.active span{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(255,213,52,.14)}.camera-actions{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);display:flex;align-items:center;gap:34px;z-index:10}.round{width:50px;height:50px;border:0;border-radius:50%;background:rgba(0,0,0,.48);color:white}.shutter{width:76px;height:76px;border-radius:50%;border:6px solid rgba(255,255,255,.24);background:white;box-shadow:0 0 0 3px white inset}.upload-hidden{display:none}
+
+/* v10 camera polish */
+#video,#arCanvas{transform:none!important;transform-origin:center center}
+#video.mirror,#arCanvas.mirror{transform:scaleX(-1)!important}
+#video{object-position:50% 50%!important}
+.camera-wrap{overflow:hidden}
+.camera-actions{min-width:270px;justify-content:center}
+.camera-actions .round{display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12)}
+.shutter{box-shadow:0 0 0 3px rgba(255,255,255,.95),0 12px 36px rgba(0,0,0,.35)}
+@media(min-width:1000px){
+  #cameraPage:before{content:"";position:absolute;inset:18px max(18px,calc((100% - 1180px)/2));border:1px solid rgba(255,255,255,.05);border-radius:34px;pointer-events:none;z-index:5}
+  .stories-strip{left:max(34px,calc((100% - 1120px)/2));right:max(34px,calc((100% - 1120px)/2))}
+  .cam-tools{right:max(34px,calc((100% - 1120px)/2))}
+}
+
 /* stories */
 .story-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.story-card{height:310px;border-radius:23px;overflow:hidden;position:relative;background:#20202a}.story-card img{width:100%;height:100%;object-fit:cover}.story-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.82))}.story-meta{position:absolute;z-index:2;left:13px;right:13px;bottom:12px}.story-meta strong{display:block}.story-meta small{color:#d2d2d8;font-size:10px}.ai-section{display:none;margin-top:30px}.ai-section.show{display:block}.ai-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.ai-head .tag{font-size:10px;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#191405;padding:6px 8px;border-radius:999px;font-weight:950}
+
+/* v10 WhatsApp-style story viewer */
+.story-card{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}
+.story-card:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(0,0,0,.24)}
+.story-bubble{position:relative}
+.story-add-badge{position:absolute;right:4px;top:38px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--yellow);color:#151105;border:2px solid #111;font-size:14px;font-weight:950;line-height:1}
+.story-viewer{position:fixed;inset:0;z-index:260;background:rgba(0,0,0,.96);display:none;align-items:center;justify-content:center;overflow:hidden}
+.story-viewer.show{display:flex}
+.story-viewer-shell{position:relative;width:min(440px,100vw);height:min(780px,100vh);background:#000;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 28px 90px rgba(0,0,0,.55)}
+.story-viewer-media{position:absolute;inset:0;display:grid;place-items:center;background:#000}
+.story-viewer-media img,.story-viewer-media video{width:100%;height:100%;object-fit:cover}
+.story-viewer-top{position:absolute;left:0;right:0;top:0;z-index:5;padding:14px 14px 0;background:linear-gradient(rgba(0,0,0,.65),transparent)}
+.story-progress{display:flex;gap:4px;margin-bottom:12px}
+.story-progress span{height:3px;flex:1;background:rgba(255,255,255,.32);border-radius:999px;overflow:hidden}
+.story-progress i{display:block;height:100%;width:0;background:#fff}
+.story-progress span.done i{width:100%}
+.story-viewer-head{display:flex;align-items:center;gap:9px}
+.story-viewer-head img{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#222;border:1px solid rgba(255,255,255,.22)}
+.story-viewer-head strong{display:block;font-size:14px}
+.story-viewer-head small{color:#ddd;font-size:10px}
+.story-viewer-controls{margin-left:auto;display:flex;gap:6px}
+.story-viewer-controls button{width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.38);color:#fff;font-size:17px}
+.story-tap{position:absolute;top:72px;bottom:0;width:35%;z-index:4;background:transparent;border:0}
+.story-tap.left{left:0}.story-tap.right{right:0}
+.story-viewer-caption{position:absolute;left:16px;right:16px;bottom:26px;z-index:5;text-align:center;text-shadow:0 2px 12px #000}
+.story-viewer-caption .text{display:inline-block;max-width:92%;padding:10px 13px;border-radius:14px;background:rgba(0,0,0,.38);backdrop-filter:blur(8px);font-weight:800}
+.story-viewer-actions{position:absolute;z-index:6;right:14px;bottom:18px;display:flex;gap:8px}
+.story-viewer-actions button{border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.48);color:#fff;border-radius:13px;padding:9px 11px;font-weight:850}
+@media(max-width:799px){
+  .story-viewer-shell{width:100vw;height:100vh}
+  .story-viewer-top{padding-top:calc(10px + env(safe-area-inset-top))}
+  .story-viewer-caption{bottom:calc(22px + env(safe-area-inset-bottom))}
+  .story-viewer-actions{bottom:calc(16px + env(safe-area-inset-bottom))}
+}
+
 /* chats */
 .chat-list{display:grid;gap:7px;max-width:900px}.chat-row{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:11px;padding:10px;border-radius:17px;border:0;background:transparent;color:#fff;text-align:left}.chat-row:hover{background:#121219}.chat-row img{width:54px;height:54px;border-radius:17px;object-fit:cover;background:#222}.chat-row p{margin:4px 0 0;color:var(--muted);font-size:11px}.badge{background:var(--yellow);color:#171304;padding:5px 7px;border-radius:999px;font-size:9px;font-weight:950}.chat-modal{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.65);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center}.chat-modal.show{display:flex}.chat-window{width:min(720px,calc(100vw - 30px));height:min(760px,84vh);background:#0f0f15;border:1px solid #292934;border-radius:28px;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}.chat-head{padding:14px 17px;border-bottom:1px solid #24242e;display:flex;align-items:center;justify-content:space-between}.chat-head-left{display:flex;align-items:center;gap:10px}.chat-head img{width:43px;height:43px;border-radius:14px;object-fit:cover}.chat-messages{padding:18px;overflow:auto;display:grid;align-content:start;gap:9px}.msg{max-width:78%;border-radius:17px;padding:11px 13px;font-size:13px;line-height:1.4}.msg.mine{margin-left:auto;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#181305;border-bottom-right-radius:7px}.msg.theirs{background:#191922;border:1px solid #282834;border-bottom-left-radius:7px}.chat-compose{display:grid;grid-template-columns:1fr auto;gap:9px;padding:13px;border-top:1px solid #23232d}.chat-compose input{background:#17171f;border:0;color:#fff;border-radius:15px;padding:13px 14px;outline:0}.chat-compose button{border:0;border-radius:15px;background:#fff;color:#111;font-weight:900;padding:0 16px}
 /* friends/profile */
@@ -24,13 +74,44 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 .games-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.game-card{border:1px solid #262631;background:#14141b;color:#fff;border-radius:20px;padding:16px;text-align:left}.game-card .game-icon{font-size:30px}.game-card strong{display:block;margin:8px 0 4px}.game-card small{color:var(--muted);line-height:1.35}.game-overlay{position:fixed;inset:0;z-index:70;background:#07070b;display:none}.game-overlay.show{display:grid;place-items:center}.game-box{width:min(600px,calc(100% - 30px));background:#13131a;border:1px solid #292934;border-radius:26px;padding:22px;text-align:center}.game-area{min-height:300px;position:relative;border-radius:20px;background:#0d0d12;margin:14px 0;overflow:hidden}.game-target{position:absolute;border:0;background:transparent;font-size:45px}.game-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.game-actions button{border:1px solid #30303b;background:#191921;color:#fff;border-radius:13px;padding:10px 13px}.game-close{position:absolute;right:20px;top:20px;width:44px;height:44px;border-radius:50%;border:1px solid #33333f;background:#17171f;color:#fff}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,15px);opacity:0;transition:.2s;background:#fff;color:#111;border-radius:14px;padding:10px 14px;font-size:11px;font-weight:850;z-index:120}.toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* v9: stable face tracking + rebuilt AR filters + glamour AI status */
+/* v10: WhatsApp-style stories + centered unmirrored camera + polished games */
 
 #arCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;display:none}
 .filter-chip{position:relative}.filter-no{position:absolute;top:0;left:5px;min-width:20px;height:20px;padding:0 4px;border-radius:999px;background:#0b0b10;border:1px solid #4a4a57;color:#ffd534;font-size:9px;display:grid;place-items:center;font-weight:900;z-index:2}.filter-chip.effect-chip span{background:radial-gradient(circle at 35% 25%,#444454,#1d1d27 68%)}
 .game-close{z-index:1000!important;cursor:pointer}.game-exit{width:100%;margin-top:10px;border:0!important;background:linear-gradient(135deg,#ffd534,#ff9f38)!important;color:#161105!important;font-weight:950!important;padding:13px 16px!important;border-radius:14px!important}.game-overlay{cursor:default}.game-box{position:relative}.game-help{font-size:11px;color:#9b9ba8;margin-top:7px}.game-card .game-num{font-size:10px;color:#ffd534;font-weight:900;float:right}.game-card{cursor:pointer;transition:.16s transform,.16s border-color}.game-card:hover{transform:translateY(-2px);border-color:#494957}
 .game-back{position:absolute;left:20px;top:20px;z-index:1001;border:1px solid #33333f;background:#17171f;color:#fff;border-radius:999px;padding:11px 16px;font-weight:850;cursor:pointer}.game-box{max-height:calc(100vh - 110px);overflow:auto}.game-area button,.game-actions button{cursor:pointer}.game-status{font-size:13px;color:#b7b7c3;margin-top:5px}.game-big{font-size:54px;font-weight:950;padding:34px 10px}.game-grid{display:grid;gap:8px;padding:14px}.game-cell{min-height:58px;border:1px solid #33333f;background:#1a1a22;color:#fff;border-radius:12px;font-size:24px}.game-cell.good{background:#173527;border-color:#2f7c55}.game-cell.bad{background:#3a171a;border-color:#7d3035}.game-progress{height:14px;border-radius:999px;background:#24242e;overflow:hidden;margin:14px}.game-progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd534,#ff9f38)}
 
+
+
+/* v10 polished games */
+.games-grid{gap:16px}
+.game-card{position:relative;overflow:hidden;min-height:210px;padding:18px;background:
+ radial-gradient(circle at 85% 0%,rgba(255,213,52,.12),transparent 34%),
+ linear-gradient(145deg,#181821,#0f0f15);border:1px solid #2d2d39;box-shadow:0 10px 30px rgba(0,0,0,.16)}
+.game-card:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0 55%,rgba(255,255,255,.025));pointer-events:none}
+.game-card:hover{transform:translateY(-5px);border-color:#5c5140;box-shadow:0 18px 40px rgba(0,0,0,.3)}
+.game-card .game-icon{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(145deg,#2b2b37,#17171f);border:1px solid #3b3b47;font-size:34px;box-shadow:inset 0 0 20px rgba(255,255,255,.025)}
+.game-card strong{font-size:16px;margin-top:14px}
+.game-card small{min-height:38px;display:block}
+.game-card .game-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}
+.game-card .play-pill{padding:7px 10px;border-radius:999px;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#181305;font-size:10px;font-weight:950}
+.game-card .level-pill{font-size:10px;color:#d7d7df;background:#23232d;border:1px solid #343441;padding:6px 8px;border-radius:999px}
+.game-overlay{background:radial-gradient(circle at 50% 15%,rgba(255,213,52,.08),transparent 34%),rgba(5,5,8,.96);backdrop-filter:blur(14px)}
+.game-box{width:min(760px,calc(100% - 28px));border-radius:30px;padding:24px;background:linear-gradient(160deg,#171720,#0f0f15);border:1px solid #30303c;box-shadow:0 28px 100px rgba(0,0,0,.58)}
+.game-box h2{margin:4px 0 8px;font-size:24px}
+.game-area{min-height:340px;border:1px solid #252530;background:
+ radial-gradient(circle at 50% 0%,rgba(119,167,255,.07),transparent 38%),
+ linear-gradient(#0d0d13,#09090e);box-shadow:inset 0 0 44px rgba(0,0,0,.3)}
+.game-actions button{background:#1c1c25;border:1px solid #373744;padding:11px 15px;border-radius:14px;font-weight:850;transition:.14s}
+.game-actions button:hover{border-color:#5a5a6d;transform:translateY(-1px)}
+.game-progress{height:8px;margin:12px 0 16px}
+.game-progress>i{box-shadow:0 0 18px rgba(255,213,52,.3)}
+@media(max-width:799px){
+  .games-grid{grid-template-columns:1fr}
+  .game-card{min-height:178px}
+  .game-box{max-height:calc(100vh - 26px);padding:18px}
+  .game-area{min-height:300px}
+}
 
 /* v2 filter navigation + admin */
 .filter-scroll{position:absolute;bottom:121px;z-index:12;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.68);color:#fff;font-size:22px;backdrop-filter:blur(12px)}.filter-scroll.prev{left:18px}.filter-scroll.next{right:18px}.filter-chip.game-chip span{background:linear-gradient(135deg,#3a2600,#17171f);border-color:#9f7720}.filter-chip.game-chip{color:#ffd534}.admin-only{display:none!important}.admin-only.show{display:flex!important}.admin-panel{display:grid;gap:18px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.admin-list{display:grid;gap:9px}.admin-user,.admin-content-row,.admin-story-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#15151d;border:1px solid #292934;border-radius:16px;padding:12px}.admin-user .actions,.admin-content-row .actions,.admin-story-row .actions{display:flex;gap:6px;flex-wrap:wrap}.mini-btn{border:1px solid #33333e;background:#202029;color:#fff;border-radius:10px;padding:8px 10px;font-size:11px}.mini-btn.danger{border-color:#5b2629;color:#ff9a9d}.mini-btn.gold{background:#ffd534;color:#151105;border-color:#ffd534;font-weight:900}.admin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-form .full{grid-column:1/-1}.admin-form input,.admin-form select{width:100%;border:1px solid #30303c;background:#111118;color:white;border-radius:12px;padding:11px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px}.section-title h2{margin:0}.filter-row{scroll-behavior:smooth;overscroll-behavior-x:contain}.filter-row::-webkit-scrollbar{display:none}
@@ -41,7 +122,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 @media(max-width:799px){body{overflow:hidden}.app{grid-template-columns:1fr}.sidebar{position:fixed;left:0;right:0;bottom:0;height:76px;z-index:50;padding:7px 5px 10px;display:block;border-right:0;border-top:1px solid #22222c}.side-brand,.sidebar-bottom{display:none}.nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(45px,1fr));gap:0}.nav button{padding:5px 2px;flex-direction:column;gap:3px;font-size:8px}.nav .ico{font-size:19px}.main{height:calc(100vh - 76px)}.topbar{height:64px;padding:0 15px}.content{inset:64px 0 0}.page{padding:22px 14px 40px}.page h1{font-size:29px}.story-grid,.friend-grid,.games-grid{grid-template-columns:1fr 1fr}.media-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.composer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.story-card{height:230px}.filter-row{width:calc(100% - 20px);bottom:100px}.camera-actions{bottom:17px}.stories-strip{left:12px;right:12px;top:12px}.cam-tools{right:12px;top:92px}.settings .row{grid-template-columns:1fr}.admin-grid,.admin-form{grid-template-columns:1fr}.chat-window{height:calc(100vh - 28px)} }
 
 /* v7 filters + level system */
-.game-level-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;padding:4px 9px;border-radius:999px;background:#252531;border:1px solid #3b3b48;color:#ffd534;font-size:11px;font-weight:900}.head-quiz-wrap{display:grid;grid-template-columns:1fr;gap:12px;padding:14px}.head-quiz-video{width:min(420px,100%);aspect-ratio:16/9;object-fit:cover;border-radius:18px;margin:auto;background:#09090d;transform:scaleX(-1);border:1px solid #33333e}.head-quiz-question{font-size:22px;font-weight:950;line-height:1.2}.head-quiz-answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.head-answer{border:1px solid #383845;border-radius:16px;padding:14px;background:#181820}.head-answer strong{display:block;font-size:18px}.head-answer small{color:#9999a8}.head-direction{font-size:12px;color:#ffd534;font-weight:900}.filter-chip.effect-chip span{overflow:hidden}.filter-chip.effect-chip:nth-child(-n+31) span{box-shadow:inset 0 0 18px rgba(255,255,255,.03)}
+.game-level-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:8px;padding:4px 9px;border-radius:999px;background:#252531;border:1px solid #3b3b48;color:#ffd534;font-size:11px;font-weight:900}.head-quiz-wrap{display:grid;grid-template-columns:1fr;gap:12px;padding:14px}.head-quiz-video{width:min(420px,100%);aspect-ratio:16/9;object-fit:cover;border-radius:18px;margin:auto;background:#09090d;transform:none;border:1px solid #33333e}.head-quiz-question{font-size:22px;font-weight:950;line-height:1.2}.head-quiz-answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.head-answer{border:1px solid #383845;border-radius:16px;padding:14px;background:#181820}.head-answer strong{display:block;font-size:18px}.head-answer small{color:#9999a8}.head-direction{font-size:12px;color:#ffd534;font-weight:900}.filter-chip.effect-chip span{overflow:hidden}.filter-chip.effect-chip:nth-child(-n+31) span{box-shadow:inset 0 0 18px rgba(255,255,255,.03)}
 </style>
 </head>
 <body>
@@ -93,11 +174,11 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     </div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v9 · lädt …</span></header>
+    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v10 · lädt …</span></header>
     <div class="content">
       <section class="page active" id="cameraPage" data-page="camera">
         <div class="camera-wrap"><video id="video" autoplay playsinline muted></video><canvas id="arCanvas"></canvas><div class="camera-empty" id="cameraEmpty"><div><span>⭐</span><h2>Mach deinen StarSnap</h2><p>Öffne die Kamera oder wähle ein Bild aus deiner Galerie.</p></div></div></div>
-        <div class="stories-strip" id="storyStrip"><button class="story-bubble" id="myStoryBtn" style="border:0;background:none;color:white"><div class="ring"><div class="plus">＋</div></div>Meine Story</button></div>
+        <div class="stories-strip" id="storyStrip"><button class="story-bubble" id="myStoryBtn" style="border:0;background:none;color:white"><div class="ring"><div class="plus" id="myStoryVisual">＋</div></div><span class="story-add-badge" id="storyAddBadge">＋</span>Meine Story</button></div>
         <div class="cam-tools"><button id="flipCamera">↻</button><button id="toggleFilters">✨</button><button id="openGames">🎮</button></div>
         <button class="filter-scroll prev" id="filterPrev" aria-label="Filter zurück">‹</button><div class="filter-row" id="filterRow"></div><button class="filter-scroll next" id="filterNext" aria-label="Filter weiter">›</button>
         <div class="camera-actions"><button class="round" id="galleryBtn">▦</button><button class="shutter" id="shutter"></button><button class="round" id="cameraBtn">📷</button></div>
@@ -129,8 +210,30 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 </section>
 
 <div class="chat-modal" id="chatModal"><div class="chat-window"><div class="chat-head"><div class="chat-head-left"><img id="chatAvatar"><div><strong id="chatName">Chat</strong><div style="color:var(--muted);font-size:10px">StarSnap Chat</div></div></div><button class="round" id="closeChat">✕</button></div><div class="chat-messages" id="chatMessages"></div><div class="chat-compose"><input id="chatInput" placeholder="Nachricht schreiben …"><button id="sendChat">Senden</button></div></div></div>
-<div class="game-overlay" id="gameOverlay"><button class="game-back" id="backGame" aria-label="Zurück">← Zurück</button><button class="game-close" id="closeGame" aria-label="Spiel schließen">✕</button><div class="game-box"><h2 id="gameTitle">Spiel</h2><div id="gameScore">Punkte: 0</div><div class="game-area" id="gameArea"></div><div class="game-actions" id="gameActions"></div><div class="game-actions" id="gameLevelNav"><button id="repeatLevel">↻ Level neu</button><button id="nextLevel">Nächstes Level →</button></div><button class="game-exit" id="exitGame">Spiel beenden</button><div class="game-help">ESC oder außerhalb des Fensters klicken = beenden</div></div></div>
+<div class="game-overlay" id="gameOverlay"><button class="game-back" id="backGame" aria-label="Zurück">← Zurück</button><button class="game-close" id="closeGame" aria-label="Spiel schließen">✕</button><div class="game-box"><h2 id="gameTitle">Spiel</h2><div id="gameScore">Punkte: 0</div><div class="game-progress"><i id="gameProgressBar"></i></div><div class="game-area" id="gameArea"></div><div class="game-actions" id="gameActions"></div><div class="game-actions" id="gameLevelNav"><button id="repeatLevel">↻ Level neu</button><button id="nextLevel">Nächstes Level →</button></div><button class="game-exit" id="exitGame">Spiel beenden</button><div class="game-help">ESC oder außerhalb des Fensters klicken = beenden</div></div></div>
 <div class="library-modal" id="libraryModal"><div class="library-sheet"><div class="library-sheet-head"><div><h2 style="margin:0">Aus Mediathek posten</h2><div class="sub" style="margin:3px 0 0">Wähle ein vorhandenes Bild oder lade ein neues vom Gerät.</div></div><button class="round" id="closeLibraryModal">✕</button></div><div class="library-choice"><button class="primary-choice" id="composerDeviceBtn">＋ Vom Gerät</button><button id="composerRefreshBtn">↻ Mediathek laden</button></div><div class="composer-grid" id="composerGrid"></div></div></div>
+
+<div class="story-viewer" id="storyViewer" aria-hidden="true">
+  <div class="story-viewer-shell" id="storyViewerShell">
+    <div class="story-viewer-media" id="storyViewerMedia"></div>
+    <div class="story-viewer-top">
+      <div class="story-progress" id="storyProgress"></div>
+      <div class="story-viewer-head">
+        <img id="storyViewerAvatar">
+        <div><strong id="storyViewerName">Story</strong><small id="storyViewerTime"></small></div>
+        <div class="story-viewer-controls">
+          <button id="storyPause" aria-label="Pause">Ⅱ</button>
+          <button id="storyClose" aria-label="Schließen">✕</button>
+        </div>
+      </div>
+    </div>
+    <button class="story-tap left" id="storyPrev" aria-label="Vorherige Story"></button>
+    <button class="story-tap right" id="storyNext" aria-label="Nächste Story"></button>
+    <div class="story-viewer-caption" id="storyViewerCaption"></div>
+    <div class="story-viewer-actions" id="storyViewerActions"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast">Gespeichert</div>
 
 <script type="module">
@@ -169,7 +272,7 @@ async function loadProfile(){
   let lastError=null;
   for(let attempt=0;attempt<3;attempt++){
     const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
-    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v9';return true}
+    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v10';return true}
     lastError=error||new Error('Profil fehlt');
     await new Promise(r=>setTimeout(r,350*(attempt+1)));
   }
@@ -378,11 +481,11 @@ async function startArLoop(){
  requestAnimationFrame(loop)
 }
 
-async function enableCamera(){try{stream?.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});const v=$('#video');v.srcObject=stream;await v.play().catch(()=>{});v.style.display='block';v.style.filter=selectedFilter;$('#cameraEmpty').style.display='none';await initFaceTracker();startArLoop();toast('Kamera aktiv')}catch(e){console.error(e);toast('Kamera-Zugriff nicht erlaubt')}}
-$('#cameraBtn').onclick=enableCamera;$('#flipCamera').onclick=()=>{facing=facing==='user'?'environment':'user';enableCamera()};$('#galleryBtn').onclick=openLibraryComposer;$('#myStoryBtn').onclick=openLibraryComposer
+async function enableCamera(){try{stream?.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});const v=$('#video');v.srcObject=stream;v.classList.toggle('mirror',facing==='user');$('#arCanvas').classList.toggle('mirror',facing==='user');await v.play().catch(()=>{});v.style.display='block';v.style.filter=selectedFilter;$('#cameraEmpty').style.display='none';await initFaceTracker();startArLoop();toast(facing==='user'?'Frontkamera aktiv · gespiegelt':'Rückkamera aktiv')}catch(e){console.error(e);toast('Kamera-Zugriff nicht erlaubt')}}
+$('#cameraBtn').onclick=enableCamera;$('#flipCamera').onclick=()=>{facing=facing==='user'?'environment':'user';enableCamera()};$('#galleryBtn').onclick=openLibraryComposer;
 $('#galleryInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const item=await saveToMediaLibrary(f,'upload');if(item)await postLibraryItemToStory(item)}
 $('#libraryUploadBtn').onclick=()=>$('#libraryUploadInput').click();$('#libraryUploadInput').onchange=async e=>{const files=[...(e.target.files||[])];for(const f of files)await saveToMediaLibrary(f,'upload');e.target.value='';await loadMediaLibrary()}
-$('#shutter').onclick=async()=>{const v=$('#video');if(!v.videoWidth)return toast('Kamera zuerst öffnen');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d');ctx.filter=selectedFilter;ctx.drawImage(v,0,0,c.width,c.height);ctx.filter='none';const ar=$('#arCanvas');if(selectedEffect!=='normal'&&ar.width&&ar.height)ctx.drawImage(ar,0,0,c.width,c.height);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));const file=new File([blob],`snap-${Date.now()}.jpg`,{type:'image/jpeg'});const item=await saveToMediaLibrary(file,'camera',{width:c.width,height:c.height});if(item){toast('In Mediathek gespeichert ★');await postLibraryItemToStory(item)}}
+$('#shutter').onclick=async()=>{const v=$('#video');if(!v.videoWidth)return toast('Kamera zuerst öffnen');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const ctx=c.getContext('2d');const mirrored=facing==='user';ctx.filter=selectedFilter;if(mirrored){ctx.save();ctx.translate(c.width,0);ctx.scale(-1,1);ctx.drawImage(v,0,0,c.width,c.height);ctx.restore()}else ctx.drawImage(v,0,0,c.width,c.height);ctx.filter='none';const ar=$('#arCanvas');if(selectedEffect!=='normal'&&ar.width&&ar.height){if(mirrored){ctx.save();ctx.translate(c.width,0);ctx.scale(-1,1);ctx.drawImage(ar,0,0,c.width,c.height);ctx.restore()}else ctx.drawImage(ar,0,0,c.width,c.height)}const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));const file=new File([blob],`snap-${Date.now()}.jpg`,{type:'image/jpeg'});const item=await saveToMediaLibrary(file,'camera',{width:c.width,height:c.height});if(item){toast('In Mediathek gespeichert ★');await postLibraryItemToStory(item)}}
 
 let mediaItems=[],mediaFilter='all';
 function mediaSignedUrl(path){return supabase.storage.from('media-library').createSignedUrl(path,60*60)}
@@ -403,9 +506,35 @@ $('#closeLibraryModal').onclick=closeLibraryComposer;$('#composerRefreshBtn').on
 async function uploadStoryFile(file){if(!session)return;const ext=(file.name.split('.').pop()||'jpg').toLowerCase(),path=`${session.user.id}/${Date.now()}-${crypto.randomUUID()}.${ext}`;toast('Story wird hochgeladen …');const {error:uerr}=await supabase.storage.from('stories').upload(path,file,{contentType:file.type,upsert:false});if(uerr)return toast('Upload fehlgeschlagen');const kind=file.type.startsWith('video/')?'video':'image';const {error}=await supabase.from('stories').insert({user_id:session.user.id,media_kind:kind,media_path:path});if(error)return toast('Story konnte nicht gespeichert werden');toast('Story veröffentlicht ★');loadStories();loadStats()}
 function storyPublicUrl(path){return supabase.storage.from('stories').getPublicUrl(path).data.publicUrl}
 
-async function loadStories(){if(!session)return;const {data,error}=await supabase.from('stories').select('*, profiles!stories_user_id_fkey(username,display_name,avatar_url,role)').gt('expires_at',new Date().toISOString()).eq('admin_only',false).order('created_at',{ascending:false}).limit(100);const grid=$('#storiesGrid');if(error){grid.innerHTML='<div class="empty">Stories konnten nicht geladen werden.</div>';return}grid.innerHTML=data?.length?data.map(s=>`<article class="story-card">${s.media_kind==='image'?`<img src="${storyPublicUrl(s.media_path)}">`:`<div style="height:100%;display:grid;place-items:center">Video Story</div>`}<div class="story-meta"><strong>${escapeHtml(s.profiles?.display_name||s.profiles?.username||'User')}</strong><small>${new Date(s.created_at).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</small></div></article>`).join(''):'<div class="empty">Noch keine Storys. Lade deine erste über „Meine Story“ hoch.</div>';renderStoryStrip(data||[]);if(profile?.role==='admin')loadAiStories()}
-function renderStoryStrip(stories){const strip=$('#storyStrip');strip.querySelectorAll('.remote-story').forEach(x=>x.remove());const seen=new Set();for(const s of stories){if(s.user_id===session.user.id||seen.has(s.user_id))continue;seen.add(s.user_id);const p=s.profiles||{};const b=document.createElement('button');b.className='story-bubble remote-story';b.style='border:0;background:none;color:white';b.innerHTML=`<div class="ring"><img src="${avatarFor(p)}"></div>${escapeHtml(p.display_name||p.username)}`;strip.appendChild(b)}}
-async function loadAiStories(){const {data,error}=await supabase.from('ai_statuses').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(60);const grid=$('#aiGrid');if(error){grid.innerHTML='<div class="empty">KI-Status nur für Admin.</div>';return}grid.innerHTML=data.map(x=>`<article class="story-card"><img src="${escapeHtml(x.image_url)}"><div class="story-meta"><strong>${escapeHtml(x.creator_name)} · AI</strong><small>${escapeHtml(x.text_content||'')} · ${new Date(x.created_at).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</small></div></article>`).join('')}
+let lastLoadedStories=[],lastLoadedAiStories=[],storyViewerItems=[],storyViewerIndex=0,storyTimer=null,storyStartedAt=0,storyDuration=6000,storyPaused=false,storyElapsed=0
+
+function storyItemUrl(item){return item.__ai?item.image_url:storyPublicUrl(item.media_path)}
+function storyItemName(item){return item.__ai?`${item.creator_name} · AI`:(item.profiles?.display_name||item.profiles?.username||'User')}
+function storyItemAvatar(item){return item.__ai?avatarFor({display_name:item.creator_name}):avatarFor(item.profiles||{})}
+function storyItemTime(item){const d=new Date(item.created_at);const age=Math.max(0,Date.now()-d.getTime());if(age<3600000)return `${Math.max(1,Math.floor(age/60000))} Min.`;if(age<86400000)return `${Math.floor(age/3600000)} Std.`;return d.toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function stopStoryTimer(){clearTimeout(storyTimer);storyTimer=null}
+function setStoryProgressAnimated(index,duration,elapsed=0){const bars=$$('#storyProgress span');bars.forEach((b,i)=>{b.classList.toggle('done',i<index);const fill=b.querySelector('i');if(i!==index){fill.style.transition='none';fill.style.width=i<index?'100%':'0'}else{fill.style.transition='none';fill.style.width=`${Math.min(100,elapsed/duration*100)}%`;requestAnimationFrame(()=>{requestAnimationFrame(()=>{fill.style.transition=`width ${Math.max(0,duration-elapsed)}ms linear`;fill.style.width='100%'})})}})}
+function renderStoryProgress(){const box=$('#storyProgress');box.innerHTML=storyViewerItems.map(()=>'<span><i></i></span>').join('')}
+async function markStoryViewed(item){if(item.__ai||!session||item.user_id===session.user.id)return;try{await supabase.from('story_views').upsert({story_id:item.id,viewer_id:session.user.id},{onConflict:'story_id,viewer_id',ignoreDuplicates:true})}catch{}}
+async function deleteStoryFromViewer(item){if(item.__ai||item.user_id!==session.user.id)return;const ok=confirm('Diese Story wirklich löschen?');if(!ok)return;const {error}=await supabase.from('stories').delete().eq('id',item.id);if(error)return toast('Story konnte nicht gelöscht werden');storyViewerItems.splice(storyViewerIndex,1);toast('Story gelöscht');loadStories();if(!storyViewerItems.length)return closeStoryViewer();storyViewerIndex=Math.min(storyViewerIndex,storyViewerItems.length-1);showStoryAt(storyViewerIndex)}
+async function repostStoryFromViewer(item){if(item.__ai||item.user_id!==session.user.id)return;const {error}=await supabase.from('stories').insert({user_id:session.user.id,media_kind:item.media_kind,media_path:item.media_path});if(error)return toast('Erneut posten fehlgeschlagen');toast('Story erneut gepostet ★');loadStories()}
+function openStoryViewer(items,startIndex=0){if(!items?.length)return;storyViewerItems=items;storyViewerIndex=Math.max(0,Math.min(startIndex,items.length-1));$('#storyViewer').classList.add('show');$('#storyViewer').setAttribute('aria-hidden','false');renderStoryProgress();showStoryAt(storyViewerIndex)}
+function closeStoryViewer(){stopStoryTimer();storyPaused=false;storyElapsed=0;$('#storyViewer').classList.remove('show');$('#storyViewer').setAttribute('aria-hidden','true');$('#storyViewerMedia').innerHTML=''}
+function nextStory(){if(storyViewerIndex<storyViewerItems.length-1){storyViewerIndex++;showStoryAt(storyViewerIndex)}else closeStoryViewer()}
+function prevStory(){if(storyViewerIndex>0){storyViewerIndex--;showStoryAt(storyViewerIndex)}else showStoryAt(0)}
+function pauseStory(){if(!$('#storyViewer').classList.contains('show'))return;if(storyPaused){storyPaused=false;$('#storyPause').textContent='Ⅱ';showStoryAt(storyViewerIndex,{resume:true})}else{storyPaused=true;$('#storyPause').textContent='▶';storyElapsed=Math.min(storyDuration,storyElapsed+(performance.now()-storyStartedAt));stopStoryTimer();const fill=$$('#storyProgress span')[storyViewerIndex]?.querySelector('i');if(fill){const pct=Math.min(100,storyElapsed/storyDuration*100);fill.style.transition='none';fill.style.width=pct+'%'}}}
+function showStoryAt(index,opt={}){stopStoryTimer();storyViewerIndex=index;const item=storyViewerItems[index];if(!item)return closeStoryViewer();renderStoryProgress();$('#storyViewerName').textContent=storyItemName(item);$('#storyViewerTime').textContent=storyItemTime(item);$('#storyViewerAvatar').src=storyItemAvatar(item);const caption=item.__ai?(item.text_content||''):(item.caption||'');$('#storyViewerCaption').innerHTML=caption?`<div class="text">${escapeHtml(caption)}</div>`:'';const actions=$('#storyViewerActions');actions.innerHTML='';if(!item.__ai&&item.user_id===session.user.id){const rp=document.createElement('button');rp.textContent='↻ Erneut posten';rp.onclick=e=>{e.stopPropagation();repostStoryFromViewer(item)};actions.appendChild(rp);const del=document.createElement('button');del.textContent='🗑 Löschen';del.onclick=e=>{e.stopPropagation();deleteStoryFromViewer(item)};actions.appendChild(del)}
+ const media=$('#storyViewerMedia');media.innerHTML='';storyPaused=false;$('#storyPause').textContent='Ⅱ';storyElapsed=opt.resume?storyElapsed:0;
+ if((item.media_kind||'image')==='video'&&!item.__ai){const v=document.createElement('video');v.src=storyItemUrl(item);v.autoplay=true;v.playsInline=true;v.controls=false;v.onloadedmetadata=()=>{storyDuration=Math.max(1500,Math.min(30000,(v.duration||6)*1000));storyStartedAt=performance.now()-storyElapsed;setStoryProgressAnimated(index,storyDuration,storyElapsed);storyTimer=setTimeout(nextStory,Math.max(0,storyDuration-storyElapsed))};v.onended=nextStory;media.appendChild(v)}else{const img=document.createElement('img');img.src=storyItemUrl(item);img.alt='Story';media.appendChild(img);storyDuration=6000;storyStartedAt=performance.now()-storyElapsed;setStoryProgressAnimated(index,storyDuration,storyElapsed);storyTimer=setTimeout(nextStory,Math.max(0,storyDuration-storyElapsed))}
+ markStoryViewed(item)
+}
+$('#storyClose').onclick=closeStoryViewer;$('#storyNext').onclick=nextStory;$('#storyPrev').onclick=prevStory;$('#storyPause').onclick=pauseStory;
+$('#storyViewer').addEventListener('pointerdown',e=>{if(e.target===$('#storyViewer'))closeStoryViewer()});
+document.addEventListener('keydown',e=>{if(!$('#storyViewer').classList.contains('show'))return;if(e.key==='ArrowRight')nextStory();if(e.key==='ArrowLeft')prevStory();if(e.key===' '){e.preventDefault();pauseStory()}if(e.key==='Escape')closeStoryViewer()})
+
+async function loadStories(){if(!session)return;const {data,error}=await supabase.from('stories').select('*, profiles!stories_user_id_fkey(username,display_name,avatar_url,role)').gt('expires_at',new Date().toISOString()).eq('admin_only',false).order('created_at',{ascending:false}).limit(100);const grid=$('#storiesGrid');if(error){grid.innerHTML='<div class="empty">Stories konnten nicht geladen werden.</div>';return}lastLoadedStories=data||[];grid.innerHTML=lastLoadedStories.length?lastLoadedStories.map((st,idx)=>`<article class="story-card" data-story-index="${idx}">${st.media_kind==='image'?`<img src="${storyPublicUrl(st.media_path)}">`:`<div style="height:100%;display:grid;place-items:center;font-size:46px">▶</div>`}<div class="story-meta"><strong>${escapeHtml(st.profiles?.display_name||st.profiles?.username||'User')}</strong><small>${new Date(st.created_at).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</small></div></article>`).join(''):'<div class="empty">Noch keine Storys. Lade deine erste über „Meine Story“ hoch.</div>';$$('[data-story-index]').forEach(card=>card.onclick=()=>{const item=lastLoadedStories[+card.dataset.storyIndex];const group=lastLoadedStories.filter(x=>x.user_id===item.user_id).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));openStoryViewer(group,Math.max(0,group.findIndex(x=>x.id===item.id)))});renderStoryStrip(lastLoadedStories);if(profile?.role==='admin')loadAiStories()}
+function renderStoryStrip(stories){const strip=$('#storyStrip');strip.querySelectorAll('.remote-story').forEach(x=>x.remove());const own=stories.filter(x=>x.user_id===session.user.id).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));const vis=$('#myStoryVisual');if(own.length){vis.innerHTML=`<img src="${avatarFor(profile)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;vis.style.padding='0'}else{vis.textContent='＋';vis.style.padding=''};$('#myStoryBtn').onclick=e=>{if(e.target.id==='storyAddBadge')return openLibraryComposer();own.length?openStoryViewer(own,0):openLibraryComposer()};const seen=new Set();for(const st of stories){if(st.user_id===session.user.id||seen.has(st.user_id))continue;seen.add(st.user_id);const p=st.profiles||{};const b=document.createElement('button');b.className='story-bubble remote-story';b.style='border:0;background:none;color:white';b.innerHTML=`<div class="ring"><img src="${avatarFor(p)}"></div>${escapeHtml(p.display_name||p.username)}`;b.onclick=()=>{const group=stories.filter(x=>x.user_id===st.user_id).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));openStoryViewer(group,0)};strip.appendChild(b)}}
+async function loadAiStories(){const {data,error}=await supabase.from('ai_statuses').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(60);const grid=$('#aiGrid');if(error){grid.innerHTML='<div class="empty">KI-Status nur für Admin.</div>';return}lastLoadedAiStories=(data||[]).map(x=>({...x,__ai:true,media_kind:'image'}));grid.innerHTML=lastLoadedAiStories.map((x,idx)=>`<article class="story-card" data-ai-story-index="${idx}"><img src="${escapeHtml(x.image_url)}"><div class="story-meta"><strong>${escapeHtml(x.creator_name)} · AI</strong><small>${escapeHtml(x.text_content||'')} · ${new Date(x.created_at).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</small></div></article>`).join('');$$('[data-ai-story-index]').forEach(card=>card.onclick=()=>{const item=lastLoadedAiStories[+card.dataset.aiStoryIndex];const group=lastLoadedAiStories.filter(x=>x.creator_name===item.creator_name).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));openStoryViewer(group,Math.max(0,group.findIndex(x=>x.id===item.id)))})}
 
 async function loadFriends(){const term=$('#friendSearch').value.trim();let q=supabase.from('profiles').select('id,username,display_name,avatar_url,role').neq('id',session.user.id).order('username').limit(40);if(term)q=q.ilike('username',`%${term}%`);const {data,error}=await q;const {data:rels}=await supabase.from('friendships').select('*').or(`requester_id.eq.${session.user.id},addressee_id.eq.${session.user.id}`);const map=new Map();(rels||[]).forEach(r=>map.set(r.requester_id===session.user.id?r.addressee_id:r.requester_id,r));const grid=$('#friendGrid');if(error)return grid.innerHTML='<div class="empty">Freunde konnten nicht geladen werden.</div>';grid.innerHTML=(data||[]).map(p=>{const r=map.get(p.id);let label='Hinzufügen';if(r?.status==='accepted')label='Freund ✓';else if(r?.status==='pending'&&r.addressee_id===session.user.id)label='Annehmen';else if(r?.status==='pending')label='Angefragt';return `<div class="friend-card"><img src="${avatarFor(p)}"><strong>${escapeHtml(p.display_name)}</strong><small>@${escapeHtml(p.username)}</small><button data-user="${p.id}" data-rel="${r?.id||''}" data-action="${label==='Annehmen'?'accept':r?'none':'add'}">${label}</button></div>`}).join('')||'<div class="empty">Keine Personen gefunden.</div>';$$('.friend-card button').forEach(b=>b.onclick=()=>friendAction(b))}
 async function friendAction(btn){if(btn.dataset.action==='add'){const {error}=await supabase.from('friendships').insert({requester_id:session.user.id,addressee_id:btn.dataset.user});if(error)return toast(error.message);toast('Freundschaft angefragt')}else if(btn.dataset.action==='accept'){const {error}=await supabase.from('friendships').update({status:'accepted',updated_at:new Date().toISOString()}).eq('id',btn.dataset.rel);if(error)return toast(error.message);toast('Freundschaft angenommen')}loadFriends();loadStats()}
@@ -482,7 +611,8 @@ GAMES[49]={icon:'☠️',name:'Impossible Gauntlet',type:'impossible',desc:'Das 
 let customCatalogFilters=[],customCatalogGames=[]
 
 function allGameDefs(){return [...GAMES,...customCatalogGames.map(x=>({icon:x.icon||'🎮',name:x.name,type:x.config?.mechanic||'reaction',desc:x.description||'Eigenes StarSnap-Spiel.',levels:Math.max(1,Math.min(20,Number(x.config?.levels)||5))}))]}
-function renderGames(){const games=allGameDefs();const grid=$('#gamesGrid');grid.innerHTML=games.map((g,i)=>`<button class="game-card" data-game="${i}"><span class="game-num">${String(i+1).padStart(2,'0')}</span><span class="game-icon">${escapeHtml(g.icon)}</span><strong>${escapeHtml(g.name)}</strong><small>${escapeHtml(g.desc||'StarSnap Mini-Game')}</small><span class="badge">${Number(g.levels)||5} Level${g.type==='impossible'?' · EXTREM':''}</span></button>`).join('');$$('.game-card').forEach(b=>b.onclick=()=>startGame(+b.dataset.game,games))}
+function gameCategory(type){if(/quiz|pattern|count|scramble|hangman|math|calc|hidden|memory|code|numMemory/i.test(type))return 'Denken';if(/reaction|race|target|precision|darts|lockpick|tempo|lane|arrows|pong|basket|golf/i.test(type))return 'Reflex';if(/headQuiz/i.test(type))return 'Kamera';return 'Challenge'}
+function renderGames(){const games=allGameDefs();const grid=$('#gamesGrid');grid.innerHTML=games.map((g,i)=>`<button class="game-card" data-game="${i}"><span class="game-num">${String(i+1).padStart(2,'0')}</span><span class="game-icon">${escapeHtml(g.icon)}</span><strong>${escapeHtml(g.name)}</strong><small>${escapeHtml(g.desc||'StarSnap Mini-Game')}</small><div class="game-bottom"><span class="level-pill">${escapeHtml(gameCategory(g.type))} · ${Number(g.levels)||5} Level${g.type==='impossible'?' · EXTREM':''}</span><span class="play-pill">Spielen ▶</span></div></button>`).join('');$$('.game-card').forEach(b=>b.onclick=()=>startGame(+b.dataset.game,games))}
 
 let gameScore=0,gameTimer=null,gameInterval=null,gameCleanupFns=[],gameTimeouts=[],gameIntervals=[],gameLevel=1,gameMaxLevel=5,currentGameIndex=-1,currentGameList=null,gameAdvancePending=false
 function gTimeout(fn,ms){const id=setTimeout(fn,ms);gameTimeouts.push(id);return id}
@@ -495,7 +625,7 @@ function scoreText(t){$('#gameScore').textContent=`Level ${gameLevel}/${gameMaxL
 function finishGameLevel(success){if(gameAdvancePending)return;gameAdvancePending=true;const actions=$('#gameActions'),cg=currentGameList?.[currentGameIndex];gTimeout(()=>{if(!$('#gameOverlay').classList.contains('show'))return;if(success&&gameLevel<gameMaxLevel){gameLevel++;startGame(currentGameIndex,currentGameList,{keepLevel:true})}else if(success){gameClean();$('#gameLevelNav').style.display='none';$('#gameArea').innerHTML=`<div class="game-big">🏆</div><div class="game-status">Alle ${gameMaxLevel} Level geschafft!</div>`;actions.innerHTML='';gBtn('Nochmal von Level 1',()=>{gameLevel=1;startGame(currentGameIndex,currentGameList,{keepLevel:true})});gBtn('Zur Spieleliste',()=>{closeGameOverlay();openPage('games')})}else{actions.innerHTML='';gBtn('Level wiederholen',()=>startGame(currentGameIndex,currentGameList,{keepLevel:true}));if(cg?.type!=='impossible')gBtn('Nächstes Level',()=>{gameLevel=Math.min(gameMaxLevel,gameLevel+1);startGame(currentGameIndex,currentGameList,{keepLevel:true})})}},650)}
 function gBtn(text,fn){const b=document.createElement('button');b.textContent=text;b.onclick=fn;$('#gameActions').appendChild(b);return b}
 function gCell(text,fn){const b=document.createElement('button');b.className='game-cell';b.textContent=text;if(fn)b.onclick=fn;return b}
-function gameTitle(g,i){$('#gameTitle').innerHTML=`${String(i+1).padStart(2,'0')} · ${g.icon} ${g.name} <span class="game-level-badge">Level ${gameLevel}/${gameMaxLevel}</span>`;$('#gameScore').textContent=`Level ${gameLevel}/${gameMaxLevel} · Punkte: 0`}
+function gameTitle(g,i){$('#gameTitle').innerHTML=`${String(i+1).padStart(2,'0')} · ${g.icon} ${g.name} <span class="game-level-badge">Level ${gameLevel}/${gameMaxLevel}</span>`;$('#gameScore').textContent=`Level ${gameLevel}/${gameMaxLevel} · Punkte: 0`;const pb=$('#gameProgressBar');if(pb)pb.style.width=`${Math.max(4,Math.round(gameLevel/gameMaxLevel*100))}%`}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function rand(n){return Math.floor(Math.random()*n)}
 
@@ -687,7 +817,7 @@ supabase.auth.onAuthStateChange((event,s)=>{
     setTimeout(()=>initializeSignedIn().catch(e=>console.error('initializeSignedIn',e)),0)
   }
 })
-window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v9'});
+window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v10'});
 boot()
 </script>
 </body>
