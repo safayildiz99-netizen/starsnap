@@ -1,12 +1,14 @@
-StarSnap REAL v2
+StarSnap REAL v3 — Mediathek
 
-Neu:
-- echter Benutzername/Passwort Login ohne E-Mail
-- Admin Studio für Benutzer, Rollen, Sperren, Story-Moderation, KI-Status und eigene Filter/Spiele
-- Filterleiste mit Vor/Zurück und Mausrad-Unterstützung
-- alle Spiele direkt im Filterbereich erreichbar
-- 50 benannte Spiele mit unterschiedlichen Varianten
-- KI-Status nur für Admin und mit 5 unterschiedlichen Bildern je Person/Minute
-- Supabase Cloud, Realtime, Stories, Freunde, Chats
+Enthält:
+- echte Benutzerkonten via Supabase
+- private Mediathek je Konto
+- Datum + Uhrzeit je Medium
+- Filter Heute/Woche/Monat/Jahr
+- automatische Wochen-/Monats-/Jahresrückblicke und "Vor X Jahren"
+- alte Medien erneut als Story posten
+- Story-Erstellung direkt aus der Mediathek oder vom Gerät
+- Kameraaufnahmen werden in der Mediathek gespeichert
+- Stories, Chats, Freunde, Admin Studio, Filter und Spiele
 
-Upload: alle Dateien dieses Ordners ins GitHub starsnap Repository hochladen.
+Upload: alle Dateien dieses Ordners ins GitHub-Repository hochladen und vorhandene Dateien ersetzen.
