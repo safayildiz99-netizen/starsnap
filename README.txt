@@ -1,13 +1,11 @@
-StarSnap REAL v13
+StarSnap REAL v14
 
-Wichtige Fixes in v13:
-- Frontkamera horizontal korrigiert: rechts bleibt rechts, links bleibt links.
-- Livebild, AR-Filter und gespeichertes Foto verwenden dieselbe Orientierung.
-- Kamera-Fenster auf Desktop sauber zentriert.
-- AR-Canvas verwendet exakt die Größe des Kamera-Fensters, damit Filter nicht mehr versetzt oder zu groß sind.
-- Bart, Schnurrbart, Haare und Glatze überarbeitet.
-- Doppeltes Posten abgesichert: Klick-/Upload-Sperre plus Datenbank-Idempotenzschlüssel.
-- KI-Status geprüft; Cron-Job aktiv, keine leeren Bild-URLs. Bei externem Bildfehler wird ein Fallback angezeigt.
+- 50 lokale KI-Bilder pro KI-Person
+- 5 zufällige KI-Storys pro Person/Minute
+- die letzten 5 Bilder werden nicht direkt wiederholt
+- nur Sofia + Mert erscheinen als festes Paar
+- 10 Paarmotive sind in Sofias 50er-Pool gemischt
+- KI-Status nur für Admin sichtbar
+- lokale /ai Assets statt zufälliger externer Stockfotos
 
-Nach Upload auf GitHub/Vercel einmal hart neu laden (Mac: Cmd+Shift+R).
-Oben muss "Cloud verbunden · v13" stehen.
+Upload: gesamten Ordnerinhalt in das GitHub-Repository hochladen.
