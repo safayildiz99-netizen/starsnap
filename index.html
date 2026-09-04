@@ -36,23 +36,22 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     <div class="tabs"><button class="active" id="loginTab">Anmelden</button><button id="registerTab">Registrieren</button></div>
     <form class="form" id="loginForm">
       <div class="error" id="loginError"></div>
-      <input class="field" id="loginEmail" type="email" placeholder="E-Mail" autocomplete="email" required>
+      <input class="field" id="loginUsername" placeholder="Benutzername" autocomplete="username" required minlength="3" maxlength="30">
       <input class="field" id="loginPassword" type="password" placeholder="Passwort" autocomplete="current-password" required>
       <button class="primary" type="submit">Anmelden ★</button>
-      <button class="secondary" type="button" id="forgotPassword">Passwort vergessen</button>
+      
     </form>
     <form class="form hidden" id="registerForm">
       <div class="error" id="registerError"></div><div class="success" id="registerSuccess"></div>
       <input class="field" id="regDisplay" placeholder="Anzeigename" required maxlength="40">
       <input class="field" id="regUsername" placeholder="Benutzername" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+">
-      <input class="field" id="regEmail" type="email" placeholder="E-Mail" autocomplete="email" required>
-      <input class="field" id="regPassword" type="password" placeholder="Passwort (mind. 8 Zeichen)" minlength="8" autocomplete="new-password" required>
+            <input class="field" id="regPassword" type="password" placeholder="Passwort (mind. 8 Zeichen)" minlength="8" autocomplete="new-password" required>
       <input class="field" id="regPassword2" type="password" placeholder="Passwort wiederholen" minlength="8" autocomplete="new-password" required>
       <input class="field" id="regBirthdate" type="date" required>
       <label style="font-size:11px;color:#aaa;display:flex;gap:8px;align-items:flex-start"><input id="regTerms" type="checkbox" required style="margin-top:2px">Ich bestätige, dass ich mindestens 13 Jahre alt bin und die Nutzungsbedingungen akzeptiere.</label>
       <button class="primary" type="submit">Konto erstellen ★</button>
     </form>
-    <div class="fine">Es werden keine Demo-Zugangsdaten mehr angezeigt oder vorausgefüllt.</div>
+    <div class="fine">Anmeldung nur mit Benutzername und Passwort. Keine E-Mail erforderlich.</div>
   </div>
 </section>
 
@@ -116,14 +115,13 @@ function ageFromDate(v){if(!v)return 0;const d=new Date(v),n=new Date();let a=n.
 
 $('#loginTab').onclick=()=>{$('#loginTab').classList.add('active');$('#registerTab').classList.remove('active');$('#loginForm').classList.remove('hidden');$('#registerForm').classList.add('hidden')}
 $('#registerTab').onclick=()=>{$('#registerTab').classList.add('active');$('#loginTab').classList.remove('active');$('#registerForm').classList.remove('hidden');$('#loginForm').classList.add('hidden')}
-$('#loginForm').onsubmit=async e=>{e.preventDefault();setErr('#loginError');const {error}=await supabase.auth.signInWithPassword({email:$('#loginEmail').value.trim(),password:$('#loginPassword').value});if(error)return setErr('#loginError',error.message);}
-$('#registerForm').onsubmit=async e=>{e.preventDefault();setErr('#registerError');$('#registerSuccess').classList.remove('show');if($('#regPassword').value!==$('#regPassword2').value)return setErr('#registerError','Die Passwörter stimmen nicht überein.');if(ageFromDate($('#regBirthdate').value)<13)return setErr('#registerError','StarSnap ist in dieser Version ab 13 Jahren.');const {data,error}=await supabase.auth.signUp({email:$('#regEmail').value.trim(),password:$('#regPassword').value,options:{data:{username:$('#regUsername').value.trim(),display_name:$('#regDisplay').value.trim()}}});if(error)return setErr('#registerError',error.message);const ok=$('#registerSuccess');ok.textContent=data.session?'Konto erstellt. Du bist angemeldet.':'Konto erstellt. Bitte bestätige deine E-Mail und melde dich danach an.';ok.classList.add('show')}
-$('#forgotPassword').onclick=async()=>{const email=$('#loginEmail').value.trim();if(!email)return setErr('#loginError','Bitte zuerst deine E-Mail eingeben.');const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin});if(error)return setErr('#loginError',error.message);toast('Passwort-E-Mail gesendet')}
+$('#loginForm').onsubmit=async e=>{e.preventDefault();setErr('#loginError');const username=$('#loginUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');if(username.length<3)return setErr('#loginError','Bitte einen gültigen Benutzernamen eingeben.');const email=`${username}@users.starsnap.invalid`;const {error}=await supabase.auth.signInWithPassword({email,password:$('#loginPassword').value});if(error)return setErr('#loginError','Benutzername oder Passwort ist falsch.');}
+$('#registerForm').onsubmit=async e=>{e.preventDefault();setErr('#registerError');$('#registerSuccess').classList.remove('show');if($('#regPassword').value!==$('#regPassword2').value)return setErr('#registerError','Die Passwörter stimmen nicht überein.');if(ageFromDate($('#regBirthdate').value)<13)return setErr('#registerError','StarSnap ist ab 13 Jahren.');const username=$('#regUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');if(!/^[a-z0-9_]{3,30}$/.test(username))return setErr('#registerError','Benutzername muss 3–30 Zeichen lang sein und darf nur Buchstaben, Zahlen und _ enthalten.');const res=await fetch(`${SUPABASE_URL}/functions/v1/register-username`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({username,password:$('#regPassword').value,display_name:$('#regDisplay').value.trim(),birthdate:$('#regBirthdate').value})});const out=await res.json().catch(()=>({}));if(!res.ok)return setErr('#registerError',out.error||'Konto konnte nicht erstellt werden.');const {error}=await supabase.auth.signInWithPassword({email:`${username}@users.starsnap.invalid`,password:$('#regPassword').value});if(error)return setErr('#registerError','Konto wurde erstellt. Bitte melde dich jetzt an.');const ok=$('#registerSuccess');ok.textContent='Konto erstellt. Du bist angemeldet.';ok.classList.add('show')}
 $('#logoutBtn').onclick=()=>supabase.auth.signOut()
 
 async function loadProfile(){if(!session?.user)return;const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).single();if(error)throw error;profile=data;renderProfileHeader();}
 function avatarFor(p){return p?.avatar_url||`https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p?.display_name||p?.username||'S')}`}
-function renderProfileHeader(){if(!profile)return;$('#miniAvatar').src=avatarFor(profile);$('#miniName').textContent=profile.display_name;$('#miniUser').childNodes[0].nodeValue='@'+profile.username+' ';$('#adminPill').classList.toggle('show',profile.role==='admin');$('#profileAvatar').src=avatarFor(profile);$('#profileName').textContent=profile.display_name;$('#profileUsername').textContent='@'+profile.username;$('#profileDisplay').value=profile.display_name;$('#profileUsernameInput').value=profile.username;$('#profileBio').value=profile.bio||'';$('#statRole').textContent=profile.role.toUpperCase();$('#aiSection').classList.toggle('show',profile.role==='admin')}
+function renderProfileHeader(){if(!profile)return;$('#miniAvatar').src=avatarFor(profile);$('#miniName').textContent=profile.display_name;$('#miniUser').childNodes[0].nodeValue='@'+profile.username+' ';$('#adminPill').classList.toggle('show',profile.role==='admin');$('#profileAvatar').src=avatarFor(profile);$('#profileName').textContent=profile.display_name;$('#profileUsername').textContent='@'+profile.username;$('#profileDisplay').value=profile.display_name;$('#profileUsernameInput').value=profile.username;$('#profileUsernameInput').readOnly=true;$('#profileBio').value=profile.bio||'';$('#statRole').textContent=profile.role.toUpperCase();$('#aiSection').classList.toggle('show',profile.role==='admin')}
 
 function openPage(name){$$('.page').forEach(p=>p.classList.toggle('active',p.dataset.page===name));$$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));$('#pageTitle').textContent={camera:'Kamera',stories:'Stories',chats:'Chats',friends:'Freunde',games:'Spiele',profile:'Profil'}[name]||'StarSnap';if(name==='stories')loadStories();if(name==='chats')loadChatList();if(name==='friends')loadFriends();if(name==='profile')loadStats()}
 $$('#nav button').forEach(b=>b.onclick=()=>openPage(b.dataset.page))
@@ -166,7 +164,7 @@ function startGame(i){clearTimeout(gameTimer);const g=GAMES[i];gameScore=0;$('#g
 $('#closeGame').onclick=()=>{clearTimeout(gameTimer);$('#gameOverlay').classList.remove('show')};$('#openGames').onclick=()=>{openPage('games')}
 
 async function loadStats(){const {count:sc}=await supabase.from('stories').select('*',{count:'exact',head:true}).eq('user_id',session.user.id);const {data:rels}=await supabase.from('friendships').select('id').eq('status','accepted').or(`requester_id.eq.${session.user.id},addressee_id.eq.${session.user.id}`);$('#statStories').textContent=sc||0;$('#statFriends').textContent=rels?.length||0}
-$('#saveProfile').onclick=async()=>{const username=$('#profileUsernameInput').value.trim(),display_name=$('#profileDisplay').value.trim(),bio=$('#profileBio').value.trim();if(!username||username.length<3)return toast('Benutzername zu kurz');const {error}=await supabase.from('profiles').update({username,display_name,bio,updated_at:new Date().toISOString()}).eq('id',session.user.id);if(error)return toast(error.message);await loadProfile();toast('Profil gespeichert')}
+$('#saveProfile').onclick=async()=>{const display_name=$('#profileDisplay').value.trim(),bio=$('#profileBio').value.trim();const {error}=await supabase.from('profiles').update({display_name,bio,updated_at:new Date().toISOString()}).eq('id',session.user.id);if(error)return toast(error.message);await loadProfile();toast('Profil gespeichert')}
 $('#avatarInput').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const ext=f.name.split('.').pop(),path=`${session.user.id}/avatar-${Date.now()}.${ext}`;const {error:u}=await supabase.storage.from('avatars').upload(path,f,{upsert:true});if(u)return toast(u.message);const url=supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;const {error}=await supabase.from('profiles').update({avatar_url:url}).eq('id',session.user.id);if(error)return toast(error.message);await loadProfile();toast('Profilbild gespeichert')}
 
 function cleanupRealtime(){realtimeChannels.forEach(c=>supabase.removeChannel(c));realtimeChannels=[]}
