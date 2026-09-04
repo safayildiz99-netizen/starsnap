@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#08080c" />
 <link rel="manifest" href="manifest.webmanifest" />
-<title>StarSnap v7</title>
+<title>StarSnap v8</title>
 <style>
 :root{--bg:#07070a;--panel:#121219;--panel2:#1b1b24;--line:#292934;--text:#fff;--muted:#9b9baa;--yellow:#ffd534;--orange:#ff9e35;--green:#65e39b;--red:#ff656a;--blue:#77a7ff;--pink:#ff5c9d}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
@@ -24,7 +24,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 .games-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.game-card{border:1px solid #262631;background:#14141b;color:#fff;border-radius:20px;padding:16px;text-align:left}.game-card .game-icon{font-size:30px}.game-card strong{display:block;margin:8px 0 4px}.game-card small{color:var(--muted);line-height:1.35}.game-overlay{position:fixed;inset:0;z-index:70;background:#07070b;display:none}.game-overlay.show{display:grid;place-items:center}.game-box{width:min(600px,calc(100% - 30px));background:#13131a;border:1px solid #292934;border-radius:26px;padding:22px;text-align:center}.game-area{min-height:300px;position:relative;border-radius:20px;background:#0d0d12;margin:14px 0;overflow:hidden}.game-target{position:absolute;border:0;background:transparent;font-size:45px}.game-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.game-actions button{border:1px solid #30303b;background:#191921;color:#fff;border-radius:13px;padding:10px 13px}.game-close{position:absolute;right:20px;top:20px;width:44px;height:44px;border-radius:50%;border:1px solid #33333f;background:#17171f;color:#fff}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,15px);opacity:0;transition:.2s;background:#fff;color:#111;border-radius:14px;padding:10px 14px;font-size:11px;font-weight:850;z-index:120}.toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* v7: rebuilt game engine + robust exit */
+/* v8: variable game levels + impossible challenge */
 
 #arCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;display:none}
 .filter-chip{position:relative}.filter-no{position:absolute;top:0;left:5px;min-width:20px;height:20px;padding:0 4px;border-radius:999px;background:#0b0b10;border:1px solid #4a4a57;color:#ffd534;font-size:9px;display:grid;place-items:center;font-weight:900;z-index:2}.filter-chip.effect-chip span{background:radial-gradient(circle at 35% 25%,#444454,#1d1d27 68%)}
@@ -93,7 +93,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     </div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v7 · lädt …</span></header>
+    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v8 · lädt …</span></header>
     <div class="content">
       <section class="page active" id="cameraPage" data-page="camera">
         <div class="camera-wrap"><video id="video" autoplay playsinline muted></video><canvas id="arCanvas"></canvas><div class="camera-empty" id="cameraEmpty"><div><span>⭐</span><h2>Mach deinen StarSnap</h2><p>Öffne die Kamera oder wähle ein Bild aus deiner Galerie.</p></div></div></div>
@@ -169,7 +169,7 @@ async function loadProfile(){
   let lastError=null;
   for(let attempt=0;attempt<3;attempt++){
     const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
-    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v7';return true}
+    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v8';return true}
     lastError=error||new Error('Profil fehlt');
     await new Promise(r=>setTimeout(r,350*(attempt+1)));
   }
@@ -394,10 +394,17 @@ const GAMES=[
 {icon:'🗺️',name:'Treasure Hunt',type:'treasure',desc:'Nutze Warm/Kalt-Hinweise und finde den Schatz.'},
 {icon:'🎈',name:'Balloon Pop',type:'balloon',desc:'Platze nur Ballons in der geforderten Farbe.'}
 ]
+
+// Unterschiedliche Level-Anzahlen je Spiel: manche kurz, manche lang.
+const GAME_LEVEL_COUNTS=[3,6,4,8,7,6,4,6,4,5,6,5,4,6,5,3,4,7,6,7,5,4,6,5,4,5,5,6,4,5,3,6,4,6,5,5,7,5,4,4,5,6,7,4,5,5,3,5,6,5];
+GAMES.forEach((g,i)=>g.levels=GAME_LEVEL_COUNTS[i]||5);
+// Spiel 50 ist bewusst der härteste Modus. Level 5 heißt "UNMÖGLICH".
+GAMES[49]={icon:'☠️',name:'Impossible Gauntlet',type:'impossible',desc:'Das härteste StarSnap-Spiel: Reflex, Gedächtnis und Präzision. Level 5 = UNMÖGLICH.',levels:5};
+
 let customCatalogFilters=[],customCatalogGames=[]
 
-function allGameDefs(){return [...GAMES,...customCatalogGames.map(x=>({icon:x.icon||'🎮',name:x.name,type:x.config?.mechanic||'reaction',desc:x.description||'Eigenes StarSnap-Spiel.'}))]}
-function renderGames(){const games=allGameDefs();const grid=$('#gamesGrid');grid.innerHTML=games.map((g,i)=>`<button class="game-card" data-game="${i}"><span class="game-num">${String(i+1).padStart(2,'0')}</span><span class="game-icon">${escapeHtml(g.icon)}</span><strong>${escapeHtml(g.name)}</strong><small>${escapeHtml(g.desc||'StarSnap Mini-Game')}</small></button>`).join('');$$('.game-card').forEach(b=>b.onclick=()=>startGame(+b.dataset.game,games))}
+function allGameDefs(){return [...GAMES,...customCatalogGames.map(x=>({icon:x.icon||'🎮',name:x.name,type:x.config?.mechanic||'reaction',desc:x.description||'Eigenes StarSnap-Spiel.',levels:Math.max(1,Math.min(20,Number(x.config?.levels)||5))}))]}
+function renderGames(){const games=allGameDefs();const grid=$('#gamesGrid');grid.innerHTML=games.map((g,i)=>`<button class="game-card" data-game="${i}"><span class="game-num">${String(i+1).padStart(2,'0')}</span><span class="game-icon">${escapeHtml(g.icon)}</span><strong>${escapeHtml(g.name)}</strong><small>${escapeHtml(g.desc||'StarSnap Mini-Game')}</small><span class="badge">${Number(g.levels)||5} Level${g.type==='impossible'?' · EXTREM':''}</span></button>`).join('');$$('.game-card').forEach(b=>b.onclick=()=>startGame(+b.dataset.game,games))}
 
 let gameScore=0,gameTimer=null,gameInterval=null,gameCleanupFns=[],gameTimeouts=[],gameIntervals=[],gameLevel=1,gameMaxLevel=5,currentGameIndex=-1,currentGameList=null,gameAdvancePending=false
 function gTimeout(fn,ms){const id=setTimeout(fn,ms);gameTimeouts.push(id);return id}
@@ -407,7 +414,7 @@ function gameClean(){clearTimeout(gameTimer);if(gameInterval){clearInterval(game
 function terminalSuccessText(t){return /✓|TOR!|Korb!|gefunden|geöffnet|gewinnst|Gelöst|Alle aus|Schatz gefunden|Start erfolgreich|Exakt 50|Richtig in|Treffer/i.test(t)}
 function terminalFailText(t){return /Falsch|Gehalten|Daneben|verfehlt|Zu früh|Fehlstart|StarSnap gewinnt|Über 50|Bombe|Falsche Reihenfolge/i.test(t)}
 function scoreText(t){$('#gameScore').textContent=`Level ${gameLevel}/${gameMaxLevel} · ${t}`;if(!gameAdvancePending&&terminalSuccessText(t))finishGameLevel(true);else if(!gameAdvancePending&&terminalFailText(t))finishGameLevel(false)}
-function finishGameLevel(success){if(gameAdvancePending)return;gameAdvancePending=true;const actions=$('#gameActions');gTimeout(()=>{if(!$('#gameOverlay').classList.contains('show'))return;if(success&&gameLevel<gameMaxLevel){gameLevel++;startGame(currentGameIndex,currentGameList,{keepLevel:true})}else if(success){gameClean();$('#gameLevelNav').style.display='none';$('#gameArea').innerHTML='<div class="game-big">🏆</div><div class="game-status">Alle 5 Level geschafft!</div>';actions.innerHTML='';gBtn('Nochmal von Level 1',()=>{gameLevel=1;startGame(currentGameIndex,currentGameList,{keepLevel:true})});gBtn('Zur Spieleliste',()=>{closeGameOverlay();openPage('games')})}else{actions.innerHTML='';gBtn('Level wiederholen',()=>startGame(currentGameIndex,currentGameList,{keepLevel:true}));gBtn('Nächstes Level',()=>{gameLevel=Math.min(gameMaxLevel,gameLevel+1);startGame(currentGameIndex,currentGameList,{keepLevel:true})})}},650)}
+function finishGameLevel(success){if(gameAdvancePending)return;gameAdvancePending=true;const actions=$('#gameActions'),cg=currentGameList?.[currentGameIndex];gTimeout(()=>{if(!$('#gameOverlay').classList.contains('show'))return;if(success&&gameLevel<gameMaxLevel){gameLevel++;startGame(currentGameIndex,currentGameList,{keepLevel:true})}else if(success){gameClean();$('#gameLevelNav').style.display='none';$('#gameArea').innerHTML=`<div class="game-big">🏆</div><div class="game-status">Alle ${gameMaxLevel} Level geschafft!</div>`;actions.innerHTML='';gBtn('Nochmal von Level 1',()=>{gameLevel=1;startGame(currentGameIndex,currentGameList,{keepLevel:true})});gBtn('Zur Spieleliste',()=>{closeGameOverlay();openPage('games')})}else{actions.innerHTML='';gBtn('Level wiederholen',()=>startGame(currentGameIndex,currentGameList,{keepLevel:true}));if(cg?.type!=='impossible')gBtn('Nächstes Level',()=>{gameLevel=Math.min(gameMaxLevel,gameLevel+1);startGame(currentGameIndex,currentGameList,{keepLevel:true})})}},650)}
 function gBtn(text,fn){const b=document.createElement('button');b.textContent=text;b.onclick=fn;$('#gameActions').appendChild(b);return b}
 function gCell(text,fn){const b=document.createElement('button');b.className='game-cell';b.textContent=text;if(fn)b.onclick=fn;return b}
 function gameTitle(g,i){$('#gameTitle').innerHTML=`${String(i+1).padStart(2,'0')} · ${g.icon} ${g.name} <span class="game-level-badge">Level ${gameLevel}/${gameMaxLevel}</span>`;$('#gameScore').textContent=`Level ${gameLevel}/${gameMaxLevel} · Punkte: 0`}
@@ -415,7 +422,7 @@ function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function rand(n){return Math.floor(Math.random()*n)}
 
 function startGame(i,games=allGameDefs(),opts={}){
- gameClean();const g=games[i];if(!g)return;if(!opts.keepLevel||currentGameIndex!==i){gameLevel=1}currentGameIndex=i;currentGameList=games;gameAdvancePending=false;gameScore=0;gameTitle(g,i);$('#gameOverlay').classList.add('show');const area=$('#gameArea'),actions=$('#gameActions');area.innerHTML='';actions.innerHTML='';$('#gameLevelNav').style.display='flex';
+ gameClean();const g=games[i];if(!g)return;gameMaxLevel=Math.max(1,Math.min(20,Number(g.levels)||5));if(!opts.keepLevel||currentGameIndex!==i){gameLevel=1}gameLevel=Math.min(gameLevel,gameMaxLevel);currentGameIndex=i;currentGameList=games;gameAdvancePending=false;gameScore=0;gameTitle(g,i);$('#gameOverlay').classList.add('show');const area=$('#gameArea'),actions=$('#gameActions');area.innerHTML='';actions.innerHTML='';$('#gameLevelNav').style.display=g.type==='impossible'?'none':'flex';
  const type=g.type;
  if(type==='penalty'){
    area.innerHTML='<div class="game-big">🥅<br><span style="font-size:20px">Wohin schießt du?</span></div>';
@@ -523,6 +530,22 @@ function startGame(i,games=allGameDefs(),opts={}){
    const seq=shuffle(['A','B','C','D']).slice(0,3),input=[];area.innerHTML=`<div class="game-big">🚀</div><div class="game-status">Folge: ${seq.join(' → ')}</div>`;gTimeout(()=>{const st=area.querySelector('.game-status');if(st)st.textContent='Jetzt eingeben'},1200);['A','B','C','D'].forEach(x=>gBtn(x,()=>{input.push(x);if(input.length===3)scoreText(input.join('')===seq.join('')?'Start erfolgreich 🚀':'Falsche Reihenfolge')}));
  } else if(type==='treasure'){
    const tx=rand(5),ty=rand(5),grid=document.createElement('div');grid.className='game-grid';grid.style.gridTemplateColumns='repeat(5,1fr)';for(let y=0;y<5;y++)for(let x=0;x<5;x++){const b=gCell('·');b.onclick=()=>{const d=Math.abs(tx-x)+Math.abs(ty-y);if(!d){b.textContent='💰';scoreText('Schatz gefunden ✓')}else{b.textContent=d<=2?'🔥':'❄️';scoreText(d<=2?'Sehr warm':'Kalt')}};grid.appendChild(b)}area.appendChild(grid);
+ } else if(type==='impossible'){
+   $('#gameLevelNav').style.display='none';
+   const label=gameLevel===5?'LEVEL 5 · UNMÖGLICH':`EXTREM · LEVEL ${gameLevel}`;
+   area.innerHTML=`<div class="game-status" style="color:${gameLevel===5?'#ff5d6c':'#ffd534'};font-weight:900;letter-spacing:.08em">${label}</div>`;
+   if(gameLevel===1){
+     const info=document.createElement('div');info.className='game-big';info.textContent='Warte auf GO …';area.appendChild(info);const b=gBtn('SCHLAGEN',()=>scoreText('Zu früh!'));b.disabled=false;const wait=700+rand(1200);gTimeout(()=>{info.textContent='GO!';info.style.color='#65e39b';const st=performance.now();b.onclick=()=>{const ms=Math.round(performance.now()-st);$('#gameScore').textContent=`Level 1/5 · ${ms} ms · Ziel ≤ 320 ms`;finishGameLevel(ms<=320)}} ,wait);
+   } else if(gameLevel===2){
+     const dirs=['←','↑','→','↓'],keys={'←':'ArrowLeft','↑':'ArrowUp','→':'ArrowRight','↓':'ArrowDown'},seq=Array.from({length:6},()=>dirs[rand(4)]);let input=[];area.innerHTML+=`<div class="game-big" id="impSeq">${seq.join(' ')}</div><div class="game-status">Merke dir 6 Richtungen.</div>`;gTimeout(()=>{$('#impSeq').textContent='? ? ? ? ? ?';area.querySelectorAll('.game-status')[1].textContent='Jetzt exakt wiederholen.'},1150);const press=sym=>{if(input.length>=seq.length)return;input.push(sym);$('#gameScore').textContent=`Level 2/5 · ${input.length}/6`;if(input.length===seq.length)finishGameLevel(input.join('')===seq.join(''))};dirs.forEach(d=>gBtn(d,()=>press(d)));gListen(document,'keydown',e=>{const sym=Object.keys(keys).find(k=>keys[k]===e.key);if(sym)press(sym)});
+   } else if(gameLevel===3){
+     let hits=0,miss=0,active=true;const need=7;const target=document.createElement('button');target.className='game-target';target.textContent='●';target.style='font-size:26px;color:#65e39b;width:32px;height:32px';const move=()=>{target.style.left=(3+Math.random()*90)+'%';target.style.top=(10+Math.random()*72)+'%'};target.onclick=()=>{if(!active)return;hits++;$('#gameScore').textContent=`Level 3/5 · Treffer ${hits}/${need}`;if(hits>=need){active=false;finishGameLevel(true)}else move()};area.appendChild(target);move();const timer=gInterval(()=>{if(!active)return;miss++;move();if(miss>=5){active=false;finishGameLevel(false)}},780);
+   } else if(gameLevel===4){
+     const symbols=['⭐','💎','🌙','🚀','🍓','🦋','⚡','🎯'];const seq=Array.from({length:8},()=>symbols[rand(symbols.length)]);area.innerHTML+=`<div class="game-big" id="impMem" style="font-size:34px">${seq.join(' ')}</div><div class="game-status">8 Symbole. Du hast 1,2 Sekunden.</div>`;gTimeout(()=>{area.innerHTML=`<div class="game-big">?</div><div class="game-status">Tippe die Reihenfolge exakt.</div>`;actions.innerHTML='';let input=[];symbols.forEach(sym=>gBtn(sym,()=>{input.push(sym);$('#gameScore').textContent=`Level 4/5 · ${input.length}/8`;if(input.length===8)finishGameLevel(input.join('')===seq.join(''))}))},1200);
+   } else {
+     // Praktisch unmöglich: 10er-Sequenz merken, in 2,4 s eingeben und danach ein 9px-Ziel in 650 ms treffen.
+     const dirs=['←','↑','→','↓'],seq=Array.from({length:10},()=>dirs[rand(4)]);let input=[],phase=0,deadline=0;area.innerHTML+=`<div class="game-big" id="imp5Seq" style="font-size:42px">${seq.join(' ')}</div><div class="game-status" style="color:#ff5d6c">10 Richtungen · 0,9 Sekunden merken.</div>`;gTimeout(()=>{const el=$('#imp5Seq');if(el)el.textContent='☠️';const st=area.querySelectorAll('.game-status')[1];if(st)st.textContent='Jetzt 10 Richtungen in 2,4 Sekunden!';deadline=performance.now()+2400;actions.innerHTML='';dirs.forEach(sym=>gBtn(sym,()=>press(sym)));gTimeout(()=>{if(phase===0)finishGameLevel(false)},2400)},900);function press(sym){if(phase!==0||!deadline)return;input.push(sym);$('#gameScore').textContent=`Level 5/5 · UNMÖGLICH · ${input.length}/10`;if(input.length===10){if(input.join('')!==seq.join('')||performance.now()>deadline){finishGameLevel(false);return}phase=1;actions.innerHTML='';area.innerHTML='<div class="game-status" style="color:#ff5d6c;font-weight:900">LETZTER SCHRITT: 650 ms</div>';const t=document.createElement('button');t.className='game-target';t.textContent='•';t.style='font-size:9px;width:12px;height:12px;color:#ff5d6c';t.style.left=(5+Math.random()*88)+'%';t.style.top=(12+Math.random()*72)+'%';t.onclick=()=>finishGameLevel(true);area.appendChild(t);gTimeout(()=>{if(!gameAdvancePending)finishGameLevel(false)},650)}}
+   }
  } else if(type==='balloon'){
    const colors=[['🔴','Rot'],['🔵','Blau'],['🟡','Gelb'],['🟢','Grün']],target=colors[rand(4)];area.innerHTML=`<div class="game-status">Platze nur: ${target[1]}</div>`;for(let i=0;i<18;i++){const c=colors[rand(4)],b=document.createElement('button');b.className='game-target';b.textContent=c[0];b.style.left=(5+rand(85))+'%';b.style.top=(10+rand(70))+'%';b.onclick=()=>{if(c[1]===target[1]){gameScore++;b.remove();const need=2+gameLevel;$('#gameScore').textContent=`Level ${gameLevel}/${gameMaxLevel} · Richtig: ${gameScore}/${need}`;if(gameScore>=need)finishGameLevel(true)}else scoreText('Falsche Farbe')};area.appendChild(b)}
  } else {
@@ -535,7 +558,7 @@ function closeGameOverlay(){gameClean();gameLevel=1;currentGameIndex=-1;currentG
 $('#closeGame').onclick=closeGameOverlay;$('#backGame').onclick=closeGameOverlay;$('#exitGame').onclick=closeGameOverlay;
 $('#gameOverlay').addEventListener('pointerdown',e=>{if(e.target===$('#gameOverlay'))closeGameOverlay()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#gameOverlay').classList.contains('show')){e.preventDefault();closeGameOverlay()}});
-$('#repeatLevel').onclick=()=>{if(currentGameIndex>=0)startGame(currentGameIndex,currentGameList,{keepLevel:true})};$('#nextLevel').onclick=()=>{if(currentGameIndex<0)return;if(gameLevel<gameMaxLevel){gameLevel++;startGame(currentGameIndex,currentGameList,{keepLevel:true})}else finishGameLevel(true)};
+$('#repeatLevel').onclick=()=>{if(currentGameIndex>=0)startGame(currentGameIndex,currentGameList,{keepLevel:true})};$('#nextLevel').onclick=()=>{if(currentGameIndex<0)return;if(currentGameList?.[currentGameIndex]?.type==='impossible')return;if(gameLevel<gameMaxLevel){gameLevel++;startGame(currentGameIndex,currentGameList,{keepLevel:true})}else finishGameLevel(true)};
 $('#openGames').onclick=()=>openPage('games')
 
 async function loadStats(){const {count:sc}=await supabase.from('stories').select('*',{count:'exact',head:true}).eq('user_id',session.user.id);const {data:rels}=await supabase.from('friendships').select('id').eq('status','accepted').or(`requester_id.eq.${session.user.id},addressee_id.eq.${session.user.id}`);$('#statStories').textContent=sc||0;$('#statFriends').textContent=rels?.length||0}
@@ -586,7 +609,7 @@ supabase.auth.onAuthStateChange((event,s)=>{
     setTimeout(()=>initializeSignedIn().catch(e=>console.error('initializeSignedIn',e)),0)
   }
 })
-window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v7'});
+window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v8'});
 boot()
 </script>
 </body>
