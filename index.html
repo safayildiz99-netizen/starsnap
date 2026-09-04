@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#08080c" />
 <link rel="manifest" href="manifest.webmanifest" />
-<title>StarSnap v8</title>
+<title>StarSnap v9</title>
 <style>
 :root{--bg:#07070a;--panel:#121219;--panel2:#1b1b24;--line:#292934;--text:#fff;--muted:#9b9baa;--yellow:#ffd534;--orange:#ff9e35;--green:#65e39b;--red:#ff656a;--blue:#77a7ff;--pink:#ff5c9d}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
@@ -24,7 +24,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
 .games-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.game-card{border:1px solid #262631;background:#14141b;color:#fff;border-radius:20px;padding:16px;text-align:left}.game-card .game-icon{font-size:30px}.game-card strong{display:block;margin:8px 0 4px}.game-card small{color:var(--muted);line-height:1.35}.game-overlay{position:fixed;inset:0;z-index:70;background:#07070b;display:none}.game-overlay.show{display:grid;place-items:center}.game-box{width:min(600px,calc(100% - 30px));background:#13131a;border:1px solid #292934;border-radius:26px;padding:22px;text-align:center}.game-area{min-height:300px;position:relative;border-radius:20px;background:#0d0d12;margin:14px 0;overflow:hidden}.game-target{position:absolute;border:0;background:transparent;font-size:45px}.game-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.game-actions button{border:1px solid #30303b;background:#191921;color:#fff;border-radius:13px;padding:10px 13px}.game-close{position:absolute;right:20px;top:20px;width:44px;height:44px;border-radius:50%;border:1px solid #33333f;background:#17171f;color:#fff}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,15px);opacity:0;transition:.2s;background:#fff;color:#111;border-radius:14px;padding:10px 14px;font-size:11px;font-weight:850;z-index:120}.toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* v8: variable game levels + impossible challenge */
+/* v9: stable face tracking + rebuilt AR filters + glamour AI status */
 
 #arCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;display:none}
 .filter-chip{position:relative}.filter-no{position:absolute;top:0;left:5px;min-width:20px;height:20px;padding:0 4px;border-radius:999px;background:#0b0b10;border:1px solid #4a4a57;color:#ffd534;font-size:9px;display:grid;place-items:center;font-weight:900;z-index:2}.filter-chip.effect-chip span{background:radial-gradient(circle at 35% 25%,#444454,#1d1d27 68%)}
@@ -93,7 +93,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     </div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v8 · lädt …</span></header>
+    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v9 · lädt …</span></header>
     <div class="content">
       <section class="page active" id="cameraPage" data-page="camera">
         <div class="camera-wrap"><video id="video" autoplay playsinline muted></video><canvas id="arCanvas"></canvas><div class="camera-empty" id="cameraEmpty"><div><span>⭐</span><h2>Mach deinen StarSnap</h2><p>Öffne die Kamera oder wähle ein Bild aus deiner Galerie.</p></div></div></div>
@@ -142,7 +142,7 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)]
 const toast=t=>{const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
 const escapeHtml=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
 let session=null,profile=null,currentChat=null,stream=null,facing='user',selectedFilter='none',selectedEffect='normal',realtimeChannels=[]
-let faceLandmarker=null,arLoopRunning=false,lastVideoTime=-1
+let faceLandmarker=null,arLoopRunning=false,lastVideoTime=-1,lastFaceLandmarks=null,smoothedFace=null,faceLostFrames=0
 
 function showAuth(){ $('#authScreen').classList.remove('hidden');$('#appScreen').classList.add('hidden') }
 function showApp(){ $('#authScreen').classList.add('hidden');$('#appScreen').classList.remove('hidden') }
@@ -169,7 +169,7 @@ async function loadProfile(){
   let lastError=null;
   for(let attempt=0;attempt<3;attempt++){
     const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
-    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v8';return true}
+    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v9';return true}
     lastError=error||new Error('Profil fehlt');
     await new Promise(r=>setTimeout(r,350*(attempt+1)));
   }
@@ -259,27 +259,85 @@ const skinSampler=document.createElement('canvas');skinSampler.width=3;skinSampl
 function sampleSkinTone(video,m){try{const sx=Math.max(2,Math.min(video.videoWidth-4,m.cx-m.fw*.18)),sy=Math.max(2,Math.min(video.videoHeight-4,m.eyeY+m.fh*.08));skinCtx.clearRect(0,0,3,3);skinCtx.drawImage(video,sx,sy,6,6,0,0,3,3);const d=skinCtx.getImageData(0,0,3,3).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++}return {r:r/n,g:g/n,b:b/n}}catch{return {r:190,g:135,b:105}}}
 function rgbaTone(t,a=1,shift=0){return `rgba(${Math.max(0,Math.min(255,t.r+shift))},${Math.max(0,Math.min(255,t.g+shift))},${Math.max(0,Math.min(255,t.b+shift))},${a})`}
 function drawEyeZoom(ctx,video,x,y,fw,fh,scale=1.28,tint=null){if(!video||!video.videoWidth)return;const sw=fw*.19,sh=fh*.11,dw=sw*scale,dh=sh*scale;ctx.save();ctx.beginPath();ctx.ellipse(x,y,dw*.49,dh*.48,0,0,Math.PI*2);ctx.clip();ctx.drawImage(video,x-sw/2,y-sh/2,sw,sh,x-dw/2,y-dh/2,dw,dh);if(tint){ctx.fillStyle=tint;ctx.globalCompositeOperation='screen';ctx.fillRect(x-dw/2,y-dh/2,dw,dh)}ctx.restore()}
-function drawArEffect(ctx,m,e,w,h,video){const {cx,fw,fh,eyeY,mouthY,leftEyeX,rightEyeX,foreheadY,chinY}=m;const skin=sampleSkinTone(video,m);ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+function smoothFaceMetrics(raw){
+ if(!raw)return null;
+ if(!smoothedFace){smoothedFace={...raw};return smoothedFace}
+ const a=.34;
+ for(const k of Object.keys(raw))smoothedFace[k]=smoothedFace[k]*(1-a)+raw[k]*a;
+ return smoothedFace
+}
+function drawArEffect(ctx,m,e,w,h,video){
+ if(!m)return;
+ const {cx,fw,fh,eyeY,mouthY,leftEyeX,rightEyeX,foreheadY,chinY}=m;
+ const skin=sampleSkinTone(video,m);
+ ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
  if(e==='beard'||e==='moustache'){
-   const dark={r:Math.max(18,skin.r*.28),g:Math.max(12,skin.g*.22),b:Math.max(10,skin.b*.18)};
+   const dark={r:Math.max(20,skin.r*.25),g:Math.max(16,skin.g*.20),b:Math.max(14,skin.b*.17)};
    if(e==='beard'){
-     ctx.globalAlpha=.8;for(let i=0;i<180;i++){const u=prand(i,4),v=prand(i,9),side=u<.5?-1:1;const yy=mouthY+fh*(.015+v*.25);const spread=(.13+.30*v)*fw;const xx=cx+side*(fw*(.10+prand(i,12)*.30));if(Math.abs(xx-cx)>spread+fw*.04)continue;const len=fh*(.012+.018*prand(i,19));ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.18+.5*prand(i,22)})`;ctx.lineWidth=.7+1.4*prand(i,31);ctx.beginPath();ctx.moveTo(xx,yy);ctx.quadraticCurveTo(xx+side*1.5,yy+len*.5,xx+side*2.5,yy+len);ctx.stroke()}
-     ctx.fillStyle=`rgba(${dark.r},${dark.g},${dark.b},.12)`;ctx.beginPath();ctx.ellipse(cx,chinY-fh*.035,fw*.31,fh*.16,0,0,Math.PI*2);ctx.fill();
+     // very soft beard mass only around jaw/chin – no painted block
+     ctx.save();ctx.filter='blur(4px)';ctx.globalAlpha=.12;ctx.fillStyle=`rgb(${dark.r},${dark.g},${dark.b})`;
+     ctx.beginPath();ctx.moveTo(cx-fw*.34,mouthY+fh*.03);ctx.quadraticCurveTo(cx-fw*.38,chinY-fh*.05,cx,chinY+fh*.015);ctx.quadraticCurveTo(cx+fw*.38,chinY-fh*.05,cx+fw*.34,mouthY+fh*.03);ctx.quadraticCurveTo(cx,mouthY+fh*.16,cx-fw*.34,mouthY+fh*.03);ctx.fill();ctx.restore();
+     for(let i=0;i<165;i++){
+       const nx=prand(i,14)*2-1, ny=prand(i,27);
+       const yy=mouthY+fh*(.035+ny*.255);
+       const allowed=.18+.20*ny;
+       if(Math.abs(nx)>allowed*2.15)continue;
+       const xx=cx+nx*fw*.43;
+       // keep upper-lip and mouth area clean
+       if(yy<mouthY+fh*.065 && Math.abs(xx-cx)<fw*.20)continue;
+       const side=xx<cx?-1:1,len=fh*(.009+.015*prand(i,38));
+       ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.18+.38*prand(i,45)})`;
+       ctx.lineWidth=.55+1.05*prand(i,55);
+       ctx.beginPath();ctx.moveTo(xx,yy);ctx.quadraticCurveTo(xx+side*1.0,yy+len*.45,xx+side*1.8,yy+len);ctx.stroke();
+     }
    }
-   for(let i=0;i<48;i++){const side=i<24?-1:1,ii=i%24,t=ii/23;const x=cx+side*fw*(.025+.14*t),y=mouthY-fh*(.018+.018*Math.sin(t*Math.PI));ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.35+.45*prand(i,7)})`;ctx.lineWidth=.8+1.4*prand(i,15);ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+side*fw*.015,y-fh*.008,x+side*fw*.025,y+fh*.005);ctx.stroke()}
+   // fine moustache, directly above the upper lip instead of eyebrow-like arcs
+   for(let i=0;i<84;i++){
+     const t=prand(i,61)*2-1;
+     const xx=cx+t*fw*.185;
+     const yy=mouthY-fh*(.018-.010*Math.abs(t)) + (prand(i,66)-.5)*fh*.009;
+     const side=t<0?-1:1,len=fw*(.010+.012*prand(i,71));
+     ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.22+.45*prand(i,75)})`;
+     ctx.lineWidth=.45+.85*prand(i,81);
+     ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+side*len,yy+fh*(.003+.005*prand(i,83)));ctx.stroke();
+   }
  }
  else if(e==='hair'){
-   const baseR=Math.max(28,skin.r*.32),baseG=Math.max(18,skin.g*.24),baseB=Math.max(14,skin.b*.18);ctx.save();ctx.globalAlpha=.34;ctx.fillStyle=`rgb(${baseR},${baseG},${baseB})`;ctx.beginPath();ctx.ellipse(cx,foreheadY-fh*.16,fw*.56,fh*.29,0,Math.PI,Math.PI*2);ctx.fill();ctx.restore();
-   for(let i=0;i<210;i++){const u=prand(i,3),side=u<.5?-1:1,t=prand(i,5),rootX=cx+side*fw*(.05+.50*t),rootY=foreheadY-fh*(.10+.18*(1-t)+.06*prand(i,8));const down=fh*(.08+.28*prand(i,11)),bend=side*fw*(.02+.09*prand(i,13));ctx.strokeStyle=`rgba(${baseR+18*prand(i,2)},${baseG+10*prand(i,17)},${baseB+7*prand(i,21)},${.28+.5*prand(i,27)})`;ctx.lineWidth=.7+1.5*prand(i,30);ctx.beginPath();ctx.moveTo(rootX,rootY);ctx.quadraticCurveTo(rootX+bend*.35,rootY+down*.45,rootX+bend,rootY+down);ctx.stroke()}
+   const baseR=Math.max(24,skin.r*.27),baseG=Math.max(17,skin.g*.20),baseB=Math.max(13,skin.b*.15);
+   // soft root shadow following the detected forehead only
+   ctx.save();ctx.filter='blur(3px)';ctx.globalAlpha=.16;ctx.strokeStyle=`rgb(${baseR},${baseG},${baseB})`;ctx.lineWidth=fh*.055;
+   ctx.beginPath();ctx.arc(cx,foreheadY-fh*.015,fw*.39,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.restore();
+   // individual stable strands; no solid helmet shape
+   for(let i=0;i<250;i++){
+     const u=prand(i,101)*2-1, edge=Math.abs(u);
+     const rootX=cx+u*fw*.43;
+     const rootY=foreheadY-fh*(.012+.075*(1-edge)) + (prand(i,105)-.5)*fh*.018;
+     const side=u<0?-1:1;
+     const sideStrand=edge>.72;
+     const endX=rootX + side*fw*((sideStrand?.055:.018)+.035*prand(i,108));
+     const endY=sideStrand ? rootY+fh*(.16+.18*prand(i,111)) : rootY-fh*(.12+.17*prand(i,114));
+     ctx.strokeStyle=`rgba(${Math.round(baseR+20*prand(i,118))},${Math.round(baseG+13*prand(i,121))},${Math.round(baseB+9*prand(i,124))},${.24+.48*prand(i,127)})`;
+     ctx.lineWidth=.55+1.25*prand(i,130);
+     ctx.beginPath();ctx.moveTo(rootX,rootY);ctx.quadraticCurveTo((rootX+endX)/2+side*fw*.01,(rootY+endY)/2,endX,endY);ctx.stroke();
+   }
  }
  else if(e==='bald'){
-   ctx.save();ctx.filter='blur(1.2px)';const g=ctx.createRadialGradient(cx,foreheadY-fh*.22,fw*.05,cx,foreheadY-fh*.16,fw*.58);g.addColorStop(0,rgbaTone(skin,.98,18));g.addColorStop(.7,rgbaTone(skin,.98,2));g.addColorStop(1,rgbaTone(skin,.72,-18));ctx.beginPath();ctx.ellipse(cx,foreheadY-fh*.12,fw*.55,fh*.31,0,Math.PI,Math.PI*2);ctx.lineTo(cx+fw*.45,foreheadY+fh*.035);ctx.quadraticCurveTo(cx,foreheadY-fh*.005,cx-fw*.45,foreheadY+fh*.035);ctx.closePath();ctx.fillStyle=g;ctx.fill();ctx.restore();ctx.strokeStyle=rgbaTone(skin,.22,-35);ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(cx,foreheadY-fh*.13,fw*.43,Math.PI*1.08,Math.PI*1.92);ctx.stroke()
+   // intentionally smaller, face-tracked scalp patch. Never draw when no face is detected.
+   const topY=foreheadY-fh*.235, baseY=foreheadY+fh*.025;
+   ctx.save();ctx.filter='blur(2px)';
+   for(let layer=0;layer<5;layer++){
+     const shrink=layer*fw*.008,alpha=.16+layer*.12;
+     const grad=ctx.createLinearGradient(cx,topY,cx,baseY);grad.addColorStop(0,rgbaTone(skin,alpha,15));grad.addColorStop(.72,rgbaTone(skin,alpha,2));grad.addColorStop(1,rgbaTone(skin,alpha,-6));
+     ctx.beginPath();ctx.moveTo(cx-fw*.43+shrink,baseY);ctx.quadraticCurveTo(cx-fw*.48+shrink,foreheadY-fh*.14,cx,topY+shrink*.2);ctx.quadraticCurveTo(cx+fw*.48-shrink,foreheadY-fh*.14,cx+fw*.43-shrink,baseY);ctx.quadraticCurveTo(cx,foreheadY-fh*.005,cx-fw*.43+shrink,baseY);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+   }
+   ctx.restore();
+   ctx.strokeStyle=rgbaTone(skin,.16,-28);ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,foreheadY-fh*.11,fw*.39,Math.PI*1.08,Math.PI*1.92);ctx.stroke();
  }
  else if(['dog','cat','bunny'].includes(e)){const y=foreheadY-fh*.12;if(e==='bunny'){ctx.fillStyle='#f4d7dc';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.23,y-fh*.24,fw*.11,fh*.28,sx*.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,145,170,.45)';ctx.beginPath();ctx.ellipse(cx+sx*fw*.23,y-fh*.24,fw*.055,fh*.22,sx*.08,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f4d7dc'}}else{ctx.fillStyle=e==='dog'?'#8b5a3c':'#9a806c';for(const sx of [-1,1]){ctx.beginPath();ctx.moveTo(cx+sx*fw*.16,y);ctx.lineTo(cx+sx*fw*.33,y-fh*.23);ctx.lineTo(cx+sx*fw*.39,y+fh*.02);ctx.closePath();ctx.fill()}}ctx.fillStyle=e==='dog'?'#3d2419':'#5b4034';ctx.beginPath();ctx.ellipse(cx,mouthY-fh*.11,fw*.075,fh*.04,0,0,Math.PI*2);ctx.fill()}
  else if(e==='makeup'||e==='beauty'){ctx.fillStyle='rgba(255,73,135,.10)';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.25,eyeY+fh*.14,fw*.105,fh*.05,0,0,Math.PI*2);ctx.fill()}ctx.strokeStyle='rgba(124,22,52,.48)';ctx.lineWidth=Math.max(2,fw*.007);ctx.beginPath();ctx.moveTo(cx-fw*.115,mouthY+fh*.006);ctx.quadraticCurveTo(cx,mouthY+fh*.024,cx+fw*.115,mouthY+fh*.006);ctx.stroke();ctx.strokeStyle='rgba(82,44,72,.28)';ctx.lineWidth=Math.max(2,fw*.006);for(const x of [leftEyeX,rightEyeX]){ctx.beginPath();ctx.moveTo(x-fw*.09,eyeY-fh*.015);ctx.quadraticCurveTo(x,eyeY-fh*.04,x+fw*.09,eyeY-fh*.01);ctx.stroke()}}
  else if(e==='blush'){ctx.fillStyle='rgba(255,97,143,.18)';for(const sx of [-1,1]){ctx.beginPath();ctx.ellipse(cx+sx*fw*.27,eyeY+fh*.15,fw*.105,fh*.052,0,0,Math.PI*2);ctx.fill()}}
  else if(e==='freckles'){ctx.fillStyle='rgba(115,72,48,.48)';for(let i=0;i<30;i++){const x=cx+(prand(i,2)-.5)*fw*.46,y=eyeY+fh*(.075+.075*prand(i,8));ctx.beginPath();ctx.arc(x,y,1+1.3*prand(i,10),0,Math.PI*2);ctx.fill()}}
- else if(e==='bigeyes'||e==='animeeyes'){drawEyeZoom(ctx,video,leftEyeX,eyeY,fw,fh,e==='animeeyes'?1.48:1.28,e==='animeeyes'?'rgba(92,121,255,.08)':null);drawEyeZoom(ctx,video,rightEyeX,eyeY,fw,fh,e==='animeeyes'?1.48:1.28,e==='animeeyes'?'rgba(92,121,255,.08)':null);if(e==='animeeyes'){ctx.fillStyle='rgba(255,255,255,.86)';for(const x of [leftEyeX,rightEyeX]){ctx.beginPath();ctx.arc(x+fw*.025,eyeY-fh*.022,fw*.012,0,Math.PI*2);ctx.fill()}}}
+ else if(e==='bigeyes'||e==='animeeyes'){drawEyeZoom(ctx,video,leftEyeX,eyeY,fw,fh,e==='animeeyes'?1.42:1.22,e==='animeeyes'?'rgba(92,121,255,.06)':null);drawEyeZoom(ctx,video,rightEyeX,eyeY,fw,fh,e==='animeeyes'?1.42:1.22,e==='animeeyes'?'rgba(92,121,255,.06)':null)}
  else if(e==='hearts'){for(let i=0;i<7;i++)drawHeart(ctx,cx+(i-3)*fw*.13,foreheadY-fh*(.18+.04*(i%2)),Math.max(18,fw*.045))}
  else if(e==='butterfly'){ctx.font=`${Math.round(fw*.18)}px system-ui`;ctx.fillText('🦋',cx-fw*.5,foreheadY);ctx.fillText('🦋',cx+fw*.25,foreheadY-fh*.1)}
  else if(e==='flowercrown'){ctx.font=`${Math.round(fw*.16)}px system-ui`;for(let i=-3;i<=3;i++)ctx.fillText(i%2?'🌸':'🌼',cx+i*fw*.12,foreheadY-fh*.14+Math.abs(i)*2)}
@@ -297,8 +355,28 @@ function drawArEffect(ctx,m,e,w,h,video){const {cx,fw,fh,eyeY,mouthY,leftEyeX,ri
  else if(e==='rank'){ctx.fillStyle='rgba(0,0,0,.72)';ctx.fillRect(cx-fw*.28,foreheadY-fh*.25,fw*.56,fh*.18);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font=`900 ${Math.round(fw*.11)}px system-ui`;ctx.fillText('STAR-LEVEL '+(1+Math.floor(Date.now()/800)%10),cx,foreheadY-fh*.13)}
  else if(e==='which'){const vals=['🔥','👑','😎','🦋','🐯','⭐'];ctx.fillStyle='rgba(0,0,0,.72)';ctx.fillRect(cx-fw*.28,foreheadY-fh*.25,fw*.56,fh*.18);ctx.textAlign='center';ctx.font=`${Math.round(fw*.13)}px system-ui`;ctx.fillText(vals[Math.floor(Date.now()/700)%vals.length],cx,foreheadY-fh*.13)}
  else if(e==='number'){ctx.fillStyle='rgba(0,0,0,.72)';ctx.beginPath();ctx.arc(cx,foreheadY-fh*.15,fw*.13,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffd534';ctx.textAlign='center';ctx.font=`900 ${Math.round(fw*.14)}px system-ui`;ctx.fillText(String((Math.floor(Date.now()/250)%99)+1),cx,foreheadY-fh*.105)}
- ctx.restore()}
-async function startArLoop(){if(arLoopRunning)return;arLoopRunning=true;const loop=()=>{const v=$('#video'),c=$('#arCanvas');if(!arLoopRunning)return;if(v&&v.readyState>=2&&selectedEffect!=='normal'){if(c.width!==v.videoWidth||c.height!==v.videoHeight){c.width=v.videoWidth;c.height=v.videoHeight}const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);let lm=null;if(faceLandmarker&&faceLandmarker!=='fallback'&&v.currentTime!==lastVideoTime){try{const res=faceLandmarker.detectForVideo(v,performance.now());lm=res.faceLandmarks?.[0]||null;lastVideoTime=v.currentTime}catch{}}const m=faceMetrics(lm,c.width,c.height);drawArEffect(ctx,m,selectedEffect,c.width,c.height,v);c.style.display='block'}else if(c){const ctx=c.getContext('2d');ctx?.clearRect(0,0,c.width,c.height);c.style.display='none'}requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+ ctx.restore()
+}
+async function startArLoop(){
+ if(arLoopRunning)return;arLoopRunning=true;
+ const loop=()=>{
+  const v=$('#video'),c=$('#arCanvas');if(!arLoopRunning)return;
+  if(v&&v.readyState>=2&&selectedEffect!=='normal'){
+   if(c.width!==v.videoWidth||c.height!==v.videoHeight){c.width=v.videoWidth;c.height=v.videoHeight;smoothedFace=null}
+   const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+   if(faceLandmarker&&faceLandmarker!=='fallback'&&v.currentTime!==lastVideoTime){
+    try{const res=faceLandmarker.detectForVideo(v,performance.now());const next=res.faceLandmarks?.[0]||null;lastVideoTime=v.currentTime;if(next){lastFaceLandmarks=next;faceLostFrames=0}else if(++faceLostFrames>4){lastFaceLandmarks=null;smoothedFace=null}}catch{}
+   }
+   const freeEffect=['rank','which','number'].includes(selectedEffect);
+   let m=null;
+   if(lastFaceLandmarks)m=smoothFaceMetrics(faceMetrics(lastFaceLandmarks,c.width,c.height));
+   else if(freeEffect)m=fallbackFace(c.width,c.height);
+   if(m){drawArEffect(ctx,m,selectedEffect,c.width,c.height,v);c.style.display='block'}else{c.style.display='none'}
+  }else if(c){const ctx=c.getContext('2d');ctx?.clearRect(0,0,c.width,c.height);c.style.display='none'}
+  requestAnimationFrame(loop)
+ };
+ requestAnimationFrame(loop)
+}
 
 async function enableCamera(){try{stream?.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});const v=$('#video');v.srcObject=stream;await v.play().catch(()=>{});v.style.display='block';v.style.filter=selectedFilter;$('#cameraEmpty').style.display='none';await initFaceTracker();startArLoop();toast('Kamera aktiv')}catch(e){console.error(e);toast('Kamera-Zugriff nicht erlaubt')}}
 $('#cameraBtn').onclick=enableCamera;$('#flipCamera').onclick=()=>{facing=facing==='user'?'environment':'user';enableCamera()};$('#galleryBtn').onclick=openLibraryComposer;$('#myStoryBtn').onclick=openLibraryComposer
@@ -609,7 +687,7 @@ supabase.auth.onAuthStateChange((event,s)=>{
     setTimeout(()=>initializeSignedIn().catch(e=>console.error('initializeSignedIn',e)),0)
   }
 })
-window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v8'});
+window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v9'});
 boot()
 </script>
 </body>
