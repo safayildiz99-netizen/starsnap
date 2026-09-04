@@ -197,8 +197,8 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     <div class="nav" id="nav">
       <button data-page="stories"><span class="ico">◉</span>Stories</button>
       <button data-page="chats"><span class="ico">💬</span>Chats</button>
-      <button data-page="camera" class="active"><span class="ico">★</span>Kamera</button>
       <button data-page="post"><span class="ico">＋</span>Posten</button>
+      <button data-page="camera" class="active"><span class="ico">★</span>Kamera</button>
       <button data-page="library"><span class="ico">▦</span>Mediathek</button>
       <button data-page="friends"><span class="ico">👥</span>Freunde</button>
       <button data-page="games"><span class="ico">🎮</span>Spiele</button>
@@ -211,7 +211,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     </div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v12 · lädt …</span></header>
+    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v13 · lädt …</span></header>
     <div class="content">
       <section class="page active" id="cameraPage" data-page="camera">
         <div class="camera-wrap" id="cameraWrap"><video id="video" autoplay playsinline muted></video><canvas id="arCanvas"></canvas><div class="camera-empty" id="cameraEmpty"><div><span>⭐</span><h2>Mach deinen StarSnap</h2><p>Öffne die Kamera oder wähle ein Bild aus deiner Galerie.</p></div></div></div>
@@ -430,16 +430,41 @@ function drawArEffect(ctx,m,e,w,h,video){
  const skin=sampleSkinTone(video,m);
  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';const faceMidY=(foreheadY+chinY)/2;ctx.translate(cx,faceMidY);ctx.rotate(m.angle||0);ctx.translate(-cx,-faceMidY);
  if(e==='beard'){
-   const dark={r:Math.max(18,skin.r*.22),g:Math.max(14,skin.g*.18),b:Math.max(12,skin.b*.15)};
-   // Natural-looking stubble: jaw + chin only. No fake moustache/eyebrow arcs.
-   for(let i=0;i<210;i++){
-     const a=prand(i,19)*Math.PI, side=(prand(i,29)*2-1), depth=prand(i,39);
-     const yy=mouthY+fh*(.055+.245*depth), jawWidth=fw*(.23+.15*depth), xx=cx+side*jawWidth;
-     if(Math.abs(xx-cx)<fw*.13 && yy<mouthY+fh*.11)continue;
-     const len=fh*(.005+.009*prand(i,49));
-     ctx.strokeStyle=`rgba(${dark.r},${dark.g},${dark.b},${.16+.34*prand(i,59)})`;ctx.lineWidth=.45+.7*prand(i,69);
-     ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx+(prand(i,79)-.5)*2,yy+len);ctx.stroke();
+   const ht=sampleHairTone(video,m);
+   // Stable short beard following the natural jaw contour.
+   // Keep upper cheeks and lips clear so it does not look painted on.
+   const jawTop=mouthY+fh*.075, jawBottom=chinY-fh*.018;
+   const rows=18, cols=54;
+   for(let r=0;r<rows;r++){
+     const t=r/(rows-1), y=jawTop+(jawBottom-jawTop)*t;
+     const half=fw*(.20+.17*t);
+     for(let c=0;c<cols;c++){
+       const u=(c/(cols-1))*2-1;
+       if(Math.abs(u)>.98)continue;
+       // clear patch below center lip, then gradually fill into chin
+       if(t<.30 && Math.abs(u)<.22)continue;
+       const jitterX=(prand(r*97+c,11)-.5)*fw*.008;
+       const jitterY=(prand(r*97+c,13)-.5)*fh*.008;
+       const x=cx+u*half+jitterX;
+       const yy=y+jitterY;
+       // tapered density near outer cheek edges
+       const edge=Math.abs(u);
+       const alpha=(.13+.24*(1-edge))*(.62+.38*t);
+       const len=fh*(.0045+.0065*prand(r*97+c,17));
+       const dir=u<0?-.22:.22;
+       ctx.strokeStyle=rgbaTone(ht,Math.min(.42,alpha),-12);
+       ctx.lineWidth=.45+.45*prand(r*97+c,19);
+       ctx.beginPath();
+       ctx.moveTo(x,yy);
+       ctx.lineTo(x+dir*len*.6,yy+len);
+       ctx.stroke();
+     }
    }
+   // slightly denser chin shadow to make it read as a beard, not random scratches
+   ctx.fillStyle=rgbaTone(ht,.055,-18);
+   ctx.beginPath();
+   ctx.ellipse(cx,chinY-fh*.055,fw*.18,fh*.085,0,0,Math.PI*2);
+   ctx.fill();
  } else if(e==='moustache'){
    const hair=sampleHairTone(video,m),lipW=Math.max(34,mouthRightX-mouthLeftX),y=upperLipY-fh*.018;
    ctx.save();ctx.fillStyle=rgbaTone(hair,.72,-6);ctx.shadowColor=rgbaTone(hair,.24,-18);ctx.shadowBlur=Math.max(1,fw*.007);

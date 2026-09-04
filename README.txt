@@ -1,6 +1,6 @@
-StarSnap REAL v12
+StarSnap REAL v13
 
-Wichtige Fixes in v12:
+Wichtige Fixes in v13:
 - Frontkamera horizontal korrigiert: rechts bleibt rechts, links bleibt links.
 - Livebild, AR-Filter und gespeichertes Foto verwenden dieselbe Orientierung.
 - Kamera-Fenster auf Desktop sauber zentriert.
@@ -10,4 +10,4 @@ Wichtige Fixes in v12:
 - KI-Status geprüft; Cron-Job aktiv, keine leeren Bild-URLs. Bei externem Bildfehler wird ein Fallback angezeigt.
 
 Nach Upload auf GitHub/Vercel einmal hart neu laden (Mac: Cmd+Shift+R).
-Oben muss "Cloud verbunden · v12" stehen.
+Oben muss "Cloud verbunden · v13" stehen.
