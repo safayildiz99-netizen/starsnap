@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#08080c" />
 <link rel="manifest" href="manifest.webmanifest" />
-<title>StarSnap</title>
+<title>StarSnap v4</title>
 <style>
 :root{--bg:#07070a;--panel:#121219;--panel2:#1b1b24;--line:#292934;--text:#fff;--muted:#9b9baa;--yellow:#ffd534;--orange:#ff9e35;--green:#65e39b;--red:#ff656a;--blue:#77a7ff;--pink:#ff5c9d}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
@@ -82,7 +82,7 @@ body{overflow:hidden}.screen{position:fixed;inset:0}.auth{overflow:auto;backgrou
     </div>
   </aside>
   <main class="main">
-    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">Cloud verbunden</span></header>
+    <header class="topbar"><strong id="pageTitle">Kamera</strong><span style="color:#6f6f7f;font-size:10px" id="cloudStatus">StarSnap v4 · lädt …</span></header>
     <div class="content">
       <section class="page active" id="cameraPage" data-page="camera">
         <div class="camera-wrap"><video id="video" autoplay playsinline muted></video><div class="camera-empty" id="cameraEmpty"><div><span>⭐</span><h2>Mach deinen StarSnap</h2><p>Öffne die Kamera oder wähle ein Bild aus deiner Galerie.</p></div></div></div>
@@ -141,9 +141,31 @@ $('#loginTab').onclick=()=>{$('#loginTab').classList.add('active');$('#registerT
 $('#registerTab').onclick=()=>{$('#registerTab').classList.add('active');$('#loginTab').classList.remove('active');$('#registerForm').classList.remove('hidden');$('#loginForm').classList.add('hidden')}
 $('#loginForm').onsubmit=async e=>{e.preventDefault();setErr('#loginError');const username=$('#loginUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');if(username.length<3)return setErr('#loginError','Bitte einen gültigen Benutzernamen eingeben.');const email=`${username}@users.starsnap.invalid`;const {error}=await supabase.auth.signInWithPassword({email,password:$('#loginPassword').value});if(error)return setErr('#loginError','Benutzername oder Passwort ist falsch.');}
 $('#registerForm').onsubmit=async e=>{e.preventDefault();setErr('#registerError');$('#registerSuccess').classList.remove('show');if($('#regPassword').value!==$('#regPassword2').value)return setErr('#registerError','Die Passwörter stimmen nicht überein.');if(ageFromDate($('#regBirthdate').value)<13)return setErr('#registerError','StarSnap ist ab 13 Jahren.');const username=$('#regUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');if(!/^[a-z0-9_]{3,30}$/.test(username))return setErr('#registerError','Benutzername muss 3–30 Zeichen lang sein und darf nur Buchstaben, Zahlen und _ enthalten.');const res=await fetch(`${SUPABASE_URL}/functions/v1/register-username`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({username,password:$('#regPassword').value,display_name:$('#regDisplay').value.trim(),birthdate:$('#regBirthdate').value})});const out=await res.json().catch(()=>({}));if(!res.ok)return setErr('#registerError',out.error||'Konto konnte nicht erstellt werden.');const {error}=await supabase.auth.signInWithPassword({email:`${username}@users.starsnap.invalid`,password:$('#regPassword').value});if(error)return setErr('#registerError','Konto wurde erstellt. Bitte melde dich jetzt an.');const ok=$('#registerSuccess');ok.textContent='Konto erstellt. Du bist angemeldet.';ok.classList.add('show')}
-$('#logoutBtn').onclick=()=>supabase.auth.signOut()
+$('#logoutBtn').onclick=async()=>{
+  const btn=$('#logoutBtn');btn.disabled=true;btn.textContent='Abmelden …';
+  try{await supabase.auth.signOut({scope:'local'})}catch(e){console.warn('signOut',e)}
+  try{Object.keys(localStorage).filter(k=>k.startsWith('sb-')&&k.includes('auth-token')).forEach(k=>localStorage.removeItem(k))}catch{}
+  session=null;profile=null;currentChat=null;cleanupRealtime();stopCamera();
+  showAuth();btn.disabled=false;btn.textContent='Abmelden';
+  try{history.replaceState(null,'',location.pathname)}catch{}
+  setTimeout(()=>location.reload(),80)
+}
 
-async function loadProfile(){if(!session?.user)return;const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).single();if(error)throw error;profile=data;renderProfileHeader();}
+async function loadProfile(){
+  if(!session?.user)return false;
+  $('#cloudStatus').textContent='Konto wird geladen …';
+  let lastError=null;
+  for(let attempt=0;attempt<3;attempt++){
+    const {data,error}=await supabase.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
+    if(!error&&data){profile=data;renderProfileHeader();$('#cloudStatus').textContent='Cloud verbunden · v4';return true}
+    lastError=error||new Error('Profil fehlt');
+    await new Promise(r=>setTimeout(r,350*(attempt+1)));
+  }
+  console.error('Profil konnte nicht geladen werden',lastError);
+  $('#cloudStatus').textContent='Profil konnte nicht geladen werden';
+  toast('Konto konnte nicht geladen werden – bitte neu anmelden.');
+  return false;
+}
 function avatarFor(p){return p?.avatar_url||`https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(p?.display_name||p?.username||'S')}`}
 function renderProfileHeader(){if(!profile)return;$('#miniAvatar').src=avatarFor(profile);$('#miniName').textContent=profile.display_name;$('#miniUser').childNodes[0].nodeValue='@'+profile.username+' ';$('#adminPill').classList.toggle('show',profile.role==='admin');$('#profileAvatar').src=avatarFor(profile);$('#profileName').textContent=profile.display_name;$('#profileUsername').textContent='@'+profile.username;$('#profileDisplay').value=profile.display_name;$('#profileUsernameInput').value=profile.username;$('#profileUsernameInput').readOnly=true;$('#profileBio').value=profile.bio||'';$('#statRole').textContent=profile.role.toUpperCase();$('#aiSection').classList.toggle('show',profile.role==='admin');$('#adminNav').classList.toggle('show',profile.role==='admin');if(profile.role==='admin')loadAdminDashboard()}
 
@@ -229,10 +251,39 @@ $('#catalogCreate').onclick=async()=>{const kind=$('#catalogKind').value,name=$(
 function cleanupRealtime(){realtimeChannels.forEach(c=>supabase.removeChannel(c));realtimeChannels=[]}
 function subscribeRealtime(){cleanupRealtime();const ch=supabase.channel('starsnap-live').on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{if(currentChat&&(payload.new?.sender_id===currentChat.id||payload.new?.recipient_id===currentChat.id))loadMessages();loadChatList()}).on('postgres_changes',{event:'*',schema:'public',table:'friendships'},()=>{loadFriends();loadChatList();loadStats()}).on('postgres_changes',{event:'*',schema:'public',table:'stories'},()=>loadStories()).on('postgres_changes',{event:'*',schema:'public',table:'media_library'},()=>{if($('#libraryPage').classList.contains('active'))loadMediaLibrary()}).subscribe();realtimeChannels.push(ch)}
 
-async function boot(){const {data:{session:s}}=await supabase.auth.getSession();session=s;if(!session){showAuth();return}showApp();await loadProfile();await loadCatalog();subscribeRealtime();loadStories();loadChatList();loadFriends();loadStats()}
-supabase.auth.onAuthStateChange(async(_event,s)=>{session=s;if(!s){profile=null;cleanupRealtime();showAuth()}else{showApp();await loadProfile();await loadCatalog();subscribeRealtime();loadStories();loadChatList();loadFriends();loadStats()}})
+async function safeRun(label,fn){try{return await fn()}catch(e){console.error(label,e);return null}}
+async function clearOldServiceWorkers(){
+  try{if('serviceWorker'in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()))}}catch{}
+  try{if('caches'in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('starsnap-')).map(k=>caches.delete(k)))}}catch{}
+}
+async function initializeSignedIn(){
+  showApp();
+  renderFilters();renderGames();
+  const ok=await loadProfile();
+  if(!ok)return;
+  await safeRun('catalog',loadCatalog);
+  subscribeRealtime();
+  safeRun('stories',loadStories);safeRun('chats',loadChatList);safeRun('friends',loadFriends);safeRun('stats',loadStats);
+}
+async function boot(){
+  await clearOldServiceWorkers();
+  const {data:{session:s},error}=await supabase.auth.getSession();
+  if(error)console.error('getSession',error);
+  session=s;
+  if(!session){$('#cloudStatus').textContent='Nicht angemeldet';showAuth();renderFilters();renderGames();return}
+  await initializeSignedIn();
+}
+supabase.auth.onAuthStateChange((event,s)=>{
+  session=s;
+  if(!s){profile=null;cleanupRealtime();stopCamera();showAuth();return}
+  // Wichtig: keine weiteren Supabase-Aufrufe direkt innerhalb des Auth-Callbacks.
+  // Sonst kann der Auth-Lock blockieren und die App bleibt bei @user / USER hängen.
+  if(event==='SIGNED_IN'||event==='TOKEN_REFRESHED'||event==='INITIAL_SESSION'){
+    setTimeout(()=>initializeSignedIn().catch(e=>console.error('initializeSignedIn',e)),0)
+  }
+})
+window.addEventListener('unhandledrejection',e=>{console.error('Unhandled',e.reason);$('#cloudStatus').textContent='Fehler beim Laden · v4'});
 boot()
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))
 </script>
 </body>
 </html>
