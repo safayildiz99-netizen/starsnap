@@ -12,3 +12,6 @@ Enthält:
 - Stories, Chats, Freunde, Admin Studio, Filter und Spiele
 
 Upload: alle Dateien dieses Ordners ins GitHub-Repository hochladen und vorhandene Dateien ersetzen.
+
+
+v5: 50 nummerierte Filter inkl. AR-Effekte; Spiele mit sicherem Beenden/ESC; 50 nummerierte Spiele.
