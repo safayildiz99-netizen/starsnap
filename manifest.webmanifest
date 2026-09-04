@@ -1,12 +1,1 @@
-{
-  "name": "StarSnap",
-  "short_name": "StarSnap",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#08080c",
-  "theme_color": "#08080c",
-  "description": "StarSnap – sichere Kamera-, Story- und Freunde-App",
-  "icons": [
-    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
-  ]
-}
+{"name":"StarSnap","short_name":"StarSnap","start_url":"./","display":"standalone","background_color":"#07070a","theme_color":"#08080c","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
