@@ -1,17 +1,15 @@
-StarSnap REAL v3 — Mediathek
+StarSnap REAL v6 — Games Rebuilt
 
 Enthält:
 - echte Benutzerkonten via Supabase
 - private Mediathek je Konto
 - Datum + Uhrzeit je Medium
-- Filter Heute/Woche/Monat/Jahr
-- automatische Wochen-/Monats-/Jahresrückblicke und "Vor X Jahren"
-- alte Medien erneut als Story posten
-- Story-Erstellung direkt aus der Mediathek oder vom Gerät
-- Kameraaufnahmen werden in der Mediathek gespeichert
-- Stories, Chats, Freunde, Admin Studio, Filter und Spiele
+- Wochen-/Monats-/Jahresrückblicke und "Vor X Jahren"
+- Stories, Chats, Freunde und Admin Studio
+- 50 nummerierte Filter inkl. AR-Effekte
+- Spiele zusätzlich direkt im Filterbereich
+- 50 neu aufgebaute Spiele mit 50 verschiedenen Spieltypen
+- robustes Spiel-Beenden: Zurück, X, Spiel beenden, ESC und Klick außerhalb
+- Timer/Intervalle werden beim Verlassen vollständig beendet
 
 Upload: alle Dateien dieses Ordners ins GitHub-Repository hochladen und vorhandene Dateien ersetzen.
-
-
-v5: 50 nummerierte Filter inkl. AR-Effekte; Spiele mit sicherem Beenden/ESC; 50 nummerierte Spiele.
